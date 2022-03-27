@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import {
     Container,
@@ -13,6 +13,10 @@ import {
 } from "@chakra-ui/react";
 import { addNote, addTag, findTags } from "../db";
 import { AsyncCreatableSelect } from "chakra-react-select";
+
+import SimpleMDE from "react-simplemde-editor";
+import "easymde/dist/easymde.min.css";
+import "./addNote.css";
 
 export default function AddNote() {
     const [text, setText] = useState("");
@@ -55,30 +59,47 @@ export default function AddNote() {
         });
     };
 
+    const options = useMemo(
+        () => ({
+            spellChecker: false,
+            placeholder: "Write your note here...",
+            // TODO: Image Uploads
+            // uploadImage: true,
+            toolbar: [
+                "bold",
+                "italic",
+                "strikethrough",
+                "heading",
+                "code",
+                "quote",
+                "unordered-list",
+                "ordered-list",
+                "link",
+                "image",
+                "table",
+                "|",
+                "clean-block",
+                "|",
+                "guide",
+            ],
+        }),
+        []
+    );
+
     return (
         <Container maxW="container.xl">
             <Heading mb="1em" mt="5px">
                 Add Note:
             </Heading>
 
-            {/* TODO: Markdown! */}
             <FormControl mb="2em" isInvalid={doValidation.text && textError}>
                 <FormLabel htmlFor="email">Note Body:</FormLabel>
-                <Textarea
-                    value={text}
-                    onChange={({ target }) => setText(target.value)}
-                    placeholder="Write your note here..."
-                />
+                <SimpleMDE value={text} onChange={setText} options={options} />
                 <FormErrorMessage>Note body cannot be blank</FormErrorMessage>
             </FormControl>
 
             <FormControl mb="3em" isInvalid={doValidation.tags && tagError}>
                 <FormLabel htmlFor="email">Tags:</FormLabel>
-                {/* <Input
-                    type="tags"
-                    value={tags.join(",")}
-                    onChange={({ target: { value } }) => setTags(value.length > 0 ? value.split(",") : [])}
-                /> */}
 
                 <AsyncCreatableSelect
                     isMulti

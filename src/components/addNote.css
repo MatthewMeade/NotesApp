@@ -1,0 +1,30 @@
+.EasyMDEContainer .CodeMirror {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.16);
+    background: none;
+    border-top: none;
+}
+
+.EasyMDEContainer .cm-s-easymde .CodeMirror-cursor {
+    color: white;
+    border-color: white;
+}
+
+.EasyMDEContainer .editor-toolbar {
+    border:1px solid rgba(255, 255, 255, 0.16);
+
+
+}
+
+.EasyMDEContainer .editor-toolbar > * {
+    color: rgba(255, 255, 255, 0.92);
+}
+.EasyMDEContainer .editor-toolbar > .active,
+.editor-toolbar > button:hover,
+.editor-preview pre,
+.cm-s-easymde .cm-comment {
+    background-color: rgba(255, 255, 255, 0.16);
+}
+.EasyMDEContainer .editor-preview {
+    background-color: rgba(255, 255, 255, 0.16);
+}
