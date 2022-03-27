@@ -1,7 +1,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import React, { useState } from "react";
 import { Input, Code } from "@chakra-ui/react";
-import { db } from "../db";
+import { db } from "../db/dexie";
 
 export default function QueryNotes() {
     const [text, setText] = useState("");
