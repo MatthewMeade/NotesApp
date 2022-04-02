@@ -13,11 +13,15 @@ export const addNote = async (text, tags = []) => {
     }
 };
 
-export const updateNote = async (id, {text, tags = []}) => {
+export const deleteNote = (id) => {
+    return db.notes.delete(id);
+};
+
+export const updateNote = (id, { text, tags = [] }) => {
     tags = tags.map((t) => t.id ?? t); // TODO: Refactor this / standardize relationships
 
-    db.notes.update(id, {text, tags, updatedDate: Date.now() })
-}
+    return db.notes.update(id, { text, tags, updatedDate: Date.now() });
+};
 
 // TODO: Maybe findNotesByWhatever (eg findNotesById, findNotesByTag)
 export const findNotes = async ({ id, text, tags = [], fillTags = true }) => {
