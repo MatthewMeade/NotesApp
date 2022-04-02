@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Container, Heading, Button, Center, useToast } from "@chakra-ui/react";
+import { Container, Heading, Button, Box, useToast } from "@chakra-ui/react";
 import { db } from "../db";
 
 export default function Settings() {
@@ -39,17 +39,17 @@ export default function Settings() {
                 Settings:
             </Heading>
 
-            <box>
+            <Box>
                 <p>Notes: {notes}</p>
                 <p>Tags: {tags}</p>
-            </box>
+            </Box>
 
-            <box>
+            <Box>
                 Delete All Data:{" "}
                 <Button colorScheme={"red"} size={"sm"} onClick={deleteAllData}>
                     Delete All Data
                 </Button>
-            </box>
+            </Box>
         </Container>
     );
 }

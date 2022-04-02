@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
     Container,
     Heading,
-    Textarea,
     FormControl,
     FormLabel,
     Button,
@@ -11,16 +10,22 @@ import {
     FormErrorMessage,
     useToast,
 } from "@chakra-ui/react";
-import { addNote, addTag, findTags } from "../../db";
+import { addNote, addTag, findNotes, findTags } from "../../db";
 import { AsyncCreatableSelect } from "chakra-react-select";
+import { useNavigate, useParams } from "react-router";
 
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import "./MDEditorStyles.css";
+import { updateNote } from "../../db/notes";
 
 // TODO: Edit Note
 
-export default function NoteForm({id}) {
+// TODO: Notes should have titles
+
+export default function NoteForm() {
+    let { id } = useParams();
+
     const [text, setText] = useState("");
     const [tags, setTags] = useState([]);
 
@@ -28,6 +33,25 @@ export default function NoteForm({id}) {
 
     const toast = useToast();
 
+    let navigate = useNavigate();
+
+    // Load note when editing
+    useEffect(() => {
+        if (!id) {
+            setText("");
+            setTags([]);
+            setDoValidation({ text: false, tags: false })
+            return;
+        }
+
+        findNotes({ id }).then(([note]) => {
+            setText(note.text);
+            setTags(note.tags);
+            setDoValidation({ text: true, tags: true });
+        });
+    }, [id]);
+
+    // Slightly smarter validation
     useEffect(() => {
         const val = { ...doValidation };
 
@@ -47,11 +71,7 @@ export default function NoteForm({id}) {
 
     const _addNote = async () => {
         // TODO: Error Handling
-        await addNote(text, tags);
-        setText("");
-        setTags([]);
-        setDoValidation({ text: false, tags: false });
-
+        const id = await addNote(text, tags);        
         toast({
             title: "Note created",
             description: "Your note has been saved",
@@ -59,7 +79,20 @@ export default function NoteForm({id}) {
             duration: 9000,
             isClosable: true,
         });
+        navigate(`/note/${id}`);
     };
+
+    const _updateNote = async () => {
+        await updateNote(id, {text, tags});
+        toast({
+            title: "Note Updated",
+            description: "Your note has been saved",
+            status: "success",
+            duration: 9000,
+            isClosable: true,
+        });
+        navigate(`/note/${id}`);
+    }
 
     const options = useMemo(
         () => ({
@@ -91,7 +124,7 @@ export default function NoteForm({id}) {
     return (
         <Container maxW="container.xl">
             <Heading mb="1em" mt="5px">
-                Add Note:
+                {id ? "Edit" : "Add"} Note:
             </Heading>
 
             <FormControl mb="2em" isInvalid={doValidation.text && textError}>
@@ -111,7 +144,7 @@ export default function NoteForm({id}) {
                     closeMenuOnSelect={false}
                     size="md"
                     loadOptions={(value, callback) => {
-                        findTags({value}).then((values) => {
+                        findTags({ value }).then((values) => {
                             callback(values.map((tag) => ({ value: tag.id, label: tag.value })));
                         });
                     }}
@@ -128,9 +161,15 @@ export default function NoteForm({id}) {
             </FormControl>
 
             <Center>
-                <Button colorScheme={"green"} disabled={inputErrors} onClick={_addNote}>
-                    Add Note
-                </Button>
+                {id ? (
+                    <Button colorScheme={"green"} disabled={inputErrors} onClick={_updateNote}>
+                        Save Note
+                    </Button>
+                ) : (
+                    <Button colorScheme={"green"} disabled={inputErrors} onClick={_addNote}>
+                        Add Note
+                    </Button>
+                )}
             </Center>
         </Container>
     );

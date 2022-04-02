@@ -1,13 +1,12 @@
 import React from "react";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 
-import { BrowserRouter } from "react-router-dom";
-
 import NoteForm from "./components/NoteForm";
+import Note from "./components/Note";
 import NotesList from "./components/NotesList";
 import NavBar from "./components/NavBar";
 import Settings from "./components/Settings";
-import { BrowserRouter as Router, Routes, Route, Link, Outlet } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom";
 
 const theme = extendTheme({
     config: {
@@ -22,17 +21,19 @@ const theme = extendTheme({
 
 function App() {
     return (
-        <BrowserRouter>
+        <Router>
             <ChakraProvider theme={theme}>
                 <Routes>
                     <Route path="/" element={<Layout />}>
                         <Route index element={<NotesList />} />
                         <Route path="add" element={<NoteForm />} />
                         <Route path="settings" element={<Settings />} />
+                        <Route path="note/:id" element={<Note controlType="page" />} />
+                        <Route path="note/:id/edit" element={<NoteForm />} />
                     </Route>
                 </Routes>
             </ChakraProvider>
-        </BrowserRouter>
+        </Router>
     );
 }
 
