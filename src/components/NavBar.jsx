@@ -16,6 +16,7 @@ import { HamburgerIcon, CloseIcon, AddIcon, SettingsIcon } from "@chakra-ui/icon
 
 import { matchPath, useLocation, Link as RouterLink } from "react-router-dom";
 
+
 const NavLink = ({ path, children, display }) => {
     const { pathname } = useLocation();
 

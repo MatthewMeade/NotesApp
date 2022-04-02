@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
+import ColorModeSwitcher from "../ColorModeSwitcher";
 
-import { Container, Heading, Button, Box, useToast } from "@chakra-ui/react";
+import { Container, Heading, Button, Box, useToast, HStack } from "@chakra-ui/react";
 import { db } from "../db";
 
 export default function Settings() {
@@ -38,6 +39,12 @@ export default function Settings() {
             <Heading mb="1em" mt="5px">
                 Settings:
             </Heading>
+
+            <HStack my={10}>
+                {/* TODO: Light mode styling needs work */}
+                <p>Color mode</p>
+                <ColorModeSwitcher />
+            </HStack>
 
             <Box>
                 <p>Notes: {notes}</p>
