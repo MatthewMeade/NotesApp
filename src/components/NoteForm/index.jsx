@@ -11,14 +11,16 @@ import {
     FormErrorMessage,
     useToast,
 } from "@chakra-ui/react";
-import { addNote, addTag, findTags } from "../db";
+import { addNote, addTag, findTags } from "../../db";
 import { AsyncCreatableSelect } from "chakra-react-select";
 
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
-import "./addNote.css";
+import "./MDEditorStyles.css";
 
-export default function AddNote() {
+// TODO: Edit Note
+
+export default function NoteForm({id}) {
     const [text, setText] = useState("");
     const [tags, setTags] = useState([]);
 
@@ -109,7 +111,7 @@ export default function AddNote() {
                     closeMenuOnSelect={false}
                     size="md"
                     loadOptions={(value, callback) => {
-                        findTags(value).then((values) => {
+                        findTags({value}).then((values) => {
                             callback(values.map((tag) => ({ value: tag.id, label: tag.value })));
                         });
                     }}
@@ -119,7 +121,6 @@ export default function AddNote() {
                     }}
                     onChange={(value) => {
                         setTags(value.map((tag) => ({ value: tag.label, id: tag.value })));
-                        console.log(value);
                     }}
                     noOptionsMessage={() => "Type to find or add tags"}
                 />

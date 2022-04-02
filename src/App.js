@@ -3,8 +3,8 @@ import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 
 import { BrowserRouter } from "react-router-dom";
 
-import AddNote from "./components/AddNote";
-import QueryNotes from "./components/QueryNotes";
+import NoteForm from "./components/NoteForm";
+import NotesList from "./components/NotesList";
 import NavBar from "./components/NavBar";
 import Settings from "./components/Settings";
 import { BrowserRouter as Router, Routes, Route, Link, Outlet } from "react-router-dom";
@@ -26,8 +26,8 @@ function App() {
             <ChakraProvider theme={theme}>
                 <Routes>
                     <Route path="/" element={<Layout />}>
-                        <Route index element={<QueryNotes />} />
-                        <Route path="add" element={<AddNote />} />
+                        <Route index element={<NotesList />} />
+                        <Route path="add" element={<NoteForm />} />
                         <Route path="settings" element={<Settings />} />
                     </Route>
                 </Routes>
