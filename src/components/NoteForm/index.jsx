@@ -9,6 +9,7 @@ import {
     Center,
     FormErrorMessage,
     useToast,
+    Input,
 } from "@chakra-ui/react";
 import { addNote, addTag, findNotes, findTags } from "../../db";
 import { AsyncCreatableSelect } from "chakra-react-select";
@@ -19,17 +20,16 @@ import "easymde/dist/easymde.min.css";
 import "./MDEditorStyles.css";
 import { updateNote } from "../../db/notes";
 
-// TODO: Edit Note
-
 // TODO: Notes should have titles
 
 export default function NoteForm() {
     let { id } = useParams();
 
     const [text, setText] = useState("");
+    const [title, setTitle] = useState("");
     const [tags, setTags] = useState([]);
 
-    const [doValidation, setDoValidation] = useState({ text: false, tags: false });
+    const [doValidation, setDoValidation] = useState({ text: false, tags: false, title: false });
 
     const toast = useToast();
 
@@ -39,15 +39,17 @@ export default function NoteForm() {
     useEffect(() => {
         if (!id) {
             setText("");
+            setTitle("");
             setTags([]);
-            setDoValidation({ text: false, tags: false })
+            setDoValidation({ text: false, tags: false, title: false });
             return;
         }
 
         findNotes({ id }).then(([note]) => {
             setText(note.text);
             setTags(note.tags);
-            setDoValidation({ text: true, tags: true });
+            setTitle(note.title);
+            setDoValidation({ text: true, tags: true, title: true });
         });
     }, [id]);
 
@@ -59,19 +61,23 @@ export default function NoteForm() {
             val.text = true;
         }
 
+        if (title !== "") {
+            val.title = true;
+        }
+
         if (tags.length > 0) {
             val.tags = true;
         }
         setDoValidation(val);
-    }, [text, tags]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [text, tags, text]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const textError = text === "";
+    const titleError = title === "";
     const tagError = tags.length === 0;
-    const inputErrors = textError || tagError;
+    const inputErrors = textError || tagError || titleError;
 
     const _addNote = async () => {
-        // TODO: Error Handling
-        const id = await addNote(text, tags);        
+        const id = await addNote({ title, text, tags });
         toast({
             title: "Note created",
             description: "Your note has been saved",
@@ -83,7 +89,7 @@ export default function NoteForm() {
     };
 
     const _updateNote = async () => {
-        await updateNote(id, {text, tags});
+        await updateNote(id, { title, text, tags });
         toast({
             title: "Note Updated",
             description: "Your note has been saved",
@@ -92,7 +98,7 @@ export default function NoteForm() {
             isClosable: true,
         });
         navigate(`/note/${id}`);
-    }
+    };
 
     const options = useMemo(
         () => ({
@@ -126,6 +132,12 @@ export default function NoteForm() {
             <Heading mb="1em" mt="5px">
                 {id ? "Edit" : "Add"} Note:
             </Heading>
+
+            <FormControl mb="2em" isInvalid={doValidation.title && titleError}>
+                <FormLabel htmlFor="email">Title:</FormLabel>
+                <Input placeholder="Enter Note Title..." value={title} onChange={(e) => setTitle(e.target.value)} />
+                <FormErrorMessage>Title cannot be blank</FormErrorMessage>
+            </FormControl>
 
             <FormControl mb="2em" isInvalid={doValidation.text && textError}>
                 <FormLabel htmlFor="email">Note Body:</FormLabel>

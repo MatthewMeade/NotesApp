@@ -66,7 +66,7 @@ export default function Note({ note: _note, controlType = "page" }) {
                 <Box w="100%" pt={2}>
                     <VStack align="left" onClick={() => setOpen(!isOpen)} borderBottom="1px solid grey">
                         <HStack alignItems={"center"} justifyContent="space-between">
-                            <Heading>This is the note title </Heading> {/* Todo: make this editable*/}
+                            <Heading>{note.title}</Heading> {/* Todo: make this editable*/}
                             <HStack>
                                 <Link to={`/note/${note.id}/edit`}>
                                     <Button leftIcon={<EditIcon />} bg="none">

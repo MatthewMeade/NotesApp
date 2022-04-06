@@ -1,10 +1,10 @@
 import { db } from "./dexie";
 import { findTags } from "./tags";
 
-export const addNote = async (text, tags = []) => {
+export const addNote = async ({ title, text, tags = [] }) => {
     tags = tags.map((t) => t.id ?? t);
     try {
-        const id = db.notes.add({ text, tags, creationDate: Date.now(), updatedDate: Date.now() });
+        const id = db.notes.add({ title, text, tags, creationDate: Date.now(), updatedDate: Date.now() });
         return id;
     } catch (error) {
         console.error({ error });
@@ -17,14 +17,14 @@ export const deleteNote = (id) => {
     return db.notes.delete(id);
 };
 
-export const updateNote = (id, { text, tags = [] }) => {
+export const updateNote = (id, { title, text, tags = [] }) => {
     tags = tags.map((t) => t.id ?? t); // TODO: Refactor this / standardize relationships
 
-    return db.notes.update(id, { text, tags, updatedDate: Date.now() });
+    return db.notes.update(id, { title, text, tags, updatedDate: Date.now() });
 };
 
 // TODO: Maybe findNotesByWhatever (eg findNotesById, findNotesByTag)
-export const findNotes = async ({ id, text, tags = [], fillTags = true }) => {
+export const findNotes = async ({ id, title, text, tags = [], fillTags = true }) => {
     tags = tags.map((t) => t.id ?? t);
 
     try {
@@ -39,12 +39,16 @@ export const findNotes = async ({ id, text, tags = [], fillTags = true }) => {
 
         if (text) {
             docs = docs.filter((note) => {
-                if (!text) {
-                    return true;
-                }
                 return note.text.includes(text);
             });
         }
+
+        if (title) {
+            docs = docs.filter((note) => {
+                return note.title.toLowerCase().includes(title.toLowerCase());
+            });
+        }
+
         const notes = (await docs.distinct().sortBy("updatedDate")).reverse();
 
         if (!fillTags) {
