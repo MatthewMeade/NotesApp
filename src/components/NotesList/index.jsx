@@ -1,33 +1,70 @@
 import React, { useEffect, useState } from "react";
-import { Container, FormLabel, Grid, GridItem, VStack, Input } from "@chakra-ui/react";
+import { Container, FormLabel, Grid, GridItem, VStack, Input, HStack } from "@chakra-ui/react";
 
-import { findTags, findNotes } from "../db";
+import { findTags, findNotes } from "../../db";
 import { AsyncSelect } from "chakra-react-select";
-import Note from "./Note";
+import Note from "../Note";
+
+import "./styles.css";
 
 // TODO: Paging
 export default function NotesList() {
     const [tags, setTags] = useState([]);
     const [title, setTitle] = useState("");
+    const [dateFrom, setDateFrom] = useState("");
+    const [dateTo, setDateTo] = useState("");
 
     const [notes, setNotes] = useState([]);
 
     useEffect(() => {
-        findNotes({ title: title, tags: tags.map((t) => t.id), fillTags: true }).then(setNotes);
-    }, [tags, title]);
+        const date = {
+            start: dateFrom ? Date.parse(dateFrom) : null,
+            end: dateTo ? Date.parse(dateTo) + 86400000 : null, // end of day
+        };
+
+        findNotes({ title: title, tags: tags.map((t) => t.id), date, fillTags: true }).then(setNotes);
+    }, [tags, title, dateFrom, dateTo]);
 
     return (
-        <Container maxW="container.xl" bg="rgba(0,0,0,0.05)" pb={10}>
+        <Container maxW="container.xl" bg="rgba(0,0,0,0.05)" pb={10} pt={5}>
             {/* <Heading>My Notes:</Heading> */}
 
             <Grid templateColumns="min-content auto" gap={6} alignItems="center" mb={10}>
                 <GridItem>
-                    <FormLabel htmlFor="email" pt="4px">
+                    <FormLabel htmlFor="title" pt="4px">
                         Title:
                     </FormLabel>
                 </GridItem>
                 <GridItem>
-                    <Input placeholder="Search by title..." value={title} onChange={(e) => setTitle(e.target.value)} />
+                    <Input
+                        placeholder="Search by title..."
+                        id="title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                    />
+                </GridItem>
+                <GridItem>
+                    <FormLabel pt="4px">Date:</FormLabel>
+                </GridItem>
+                <GridItem>
+                    <HStack>
+                        <Input
+                            id="dateFrom"
+                            name="From"
+                            type="date"
+                            value={dateFrom}
+                            onChange={(e) => setDateFrom(e.target.value)}
+                            placeholder="Beginning Of Time"
+                        />
+                        <Input
+                            id="dateTo"
+                            name="To"
+                            type="date"
+                            value={dateTo}
+                            onChange={(e) => setDateTo(e.target.value)}
+                            placeholder="Today"
+                        />
+                    </HStack>
                 </GridItem>
                 <GridItem>
                     <FormLabel htmlFor="tags" pt="4px">

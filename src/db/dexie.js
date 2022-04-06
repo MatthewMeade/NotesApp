@@ -5,6 +5,8 @@ import "dexie-syncable";
 
 export const db = new Dexie("myDatabase");
 
+window.db = db;
+
 db.version(1).stores({
     notes: "$$id, title, text, *tags, createdDate, updatedDate",
     tags: "$$id, value",

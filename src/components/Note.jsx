@@ -43,8 +43,11 @@ export default function Note({ note: _note, controlType = "page" }) {
 
     const isPage = controlType === "page";
 
-    const date = new Date(note?.creationDate);
-    const dateStr = `${date.toLocaleDateString()} - ${date.toLocaleTimeString()}`;
+    const cdate = new Date(note?.creationDate);
+    const cdateStr = `${cdate.toLocaleDateString()} - ${cdate.toLocaleTimeString()}`;
+
+    const udate = new Date(note?.updatedDate);
+    const udateStr = `${udate.toLocaleDateString()} - ${udate.toLocaleTimeString()}`;
 
     const [isOpen, setOpen] = useState(true);
 
@@ -107,8 +110,8 @@ export default function Note({ note: _note, controlType = "page" }) {
                             ))}
                         </Flex>
                         <Flex justify="space-between">
-                            {isPage && <Text as="i">Created: {dateStr}</Text>}
-                            <Text as="i">Last Updated: {dateStr}</Text>
+                            {isPage && <Text as="i">Created: {cdateStr}</Text>}
+                            <Text as="i">Last Updated: {udateStr}</Text>
                         </Flex>
                     </VStack>
 

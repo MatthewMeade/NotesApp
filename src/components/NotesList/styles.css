@@ -1,0 +1,43 @@
+.input-container input {
+    border: none;
+    box-sizing: border-box;
+    outline: 0;
+    padding: 0.75rem;
+    position: relative;
+    width: 100%;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+}
+
+
+input[type="date"] {
+    text-align: right;
+}
+
+input[type="date"]:before {
+    color: lightgrey;
+    content: attr(name) !important;
+    margin-right: 0.5em;
+}
+
+input[type="date"][value=""]:not(:focus) {
+    /* border: 1px solid red;  */
+    color: transparent;
+    
+}
+
+input[type="date"][value=""]:not(:focus):after {
+    content: attr(placeholder);
+    color: gray;
+}

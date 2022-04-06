@@ -24,7 +24,7 @@ export const updateNote = (id, { title, text, tags = [] }) => {
 };
 
 // TODO: Maybe findNotesByWhatever (eg findNotesById, findNotesByTag)
-export const findNotes = async ({ id, title, text, tags = [], fillTags = true }) => {
+export const findNotes = async ({ id, title, text, tags = [], fillTags = true, date: { start, end } = {} }) => {
     tags = tags.map((t) => t.id ?? t);
 
     try {
@@ -37,9 +37,15 @@ export const findNotes = async ({ id, title, text, tags = [], fillTags = true })
             docs = docs.toCollection();
         }
 
-        if (text) {
+        if (start) {
             docs = docs.filter((note) => {
-                return note.text.includes(text);
+                return note.updatedDate >= start;
+            });
+        }
+
+        if (end) {
+            docs = docs.filter((note) => {
+                return note.updatedDate <= end;
             });
         }
 
