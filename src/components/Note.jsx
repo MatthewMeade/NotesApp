@@ -16,8 +16,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Link } from "react-router-dom";
-import { findNotes } from "../db";
-import { deleteNote } from "../db/notes";
+
+import { NotesService } from "../db/notesService";
 import ConfirmableButton from "./ConfirmableButton";
 import MarkdownRenderer from "./MarkdownRenderer";
 
@@ -33,7 +33,7 @@ export default function Note({ note: _note, controlType = "page" }) {
             return;
         }
 
-        findNotes({ id }).then(([loadedNote]) => {
+        NotesService.getNoteById(id).then((loadedNote) => {
             if (!loadedNote) {
                 return navigate("/"); // TODO: 404
             }
@@ -52,7 +52,7 @@ export default function Note({ note: _note, controlType = "page" }) {
     const [isOpen, setOpen] = useState(true);
 
     const onDelete = async () => {
-        await deleteNote(id);
+        await NotesService.removeNote(id);
         toast({
             title: "Note Deleted",
             description: "Your note has been Deleted",

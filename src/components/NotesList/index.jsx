@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Container, FormLabel, Grid, GridItem, VStack, Input, HStack } from "@chakra-ui/react";
 
-import { findTags, findNotes } from "../../db";
 import { AsyncSelect } from "chakra-react-select";
 import Note from "../Note";
 
 import "./styles.css";
+import { NotesService } from "../../db/notesService";
+import { TagsService } from "../../db/tagsService";
 
 // TODO: Paging
 export default function NotesList() {
@@ -18,11 +19,13 @@ export default function NotesList() {
 
     useEffect(() => {
         const date = {
-            start: dateFrom ? Date.parse(dateFrom) : null,
-            end: dateTo ? Date.parse(dateTo) + 86400000 : null, // end of day
+            start: dateFrom ? new Date(dateFrom) : undefined,
+            end: dateTo ? new Date(Date.parse(dateTo) + 86400000) : undefined, // end of day
         };
 
-        findNotes({ title: title, tags: tags.map((t) => t.id), date, fillTags: true }).then(setNotes);
+        // findNotes({ title: title, tags: tags.map((t) => t.id), date, fillTags: true }).then(setNotes);
+
+        NotesService.findNotes({ title: title, tags: tags.map((t) => t.id), date }).then(setNotes);
     }, [tags, title, dateFrom, dateTo]);
 
     return (
@@ -82,7 +85,7 @@ export default function NotesList() {
                         closeMenuOnSelect={false}
                         size="md"
                         loadOptions={(value, callback) => {
-                            findTags({ value }).then((values) => {
+                            TagsService.findTags(value).then((values) => {
                                 callback(values.map((tag) => ({ value: tag.id, label: tag.value })));
                             });
                         }}

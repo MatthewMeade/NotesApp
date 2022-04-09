@@ -11,14 +11,14 @@ import {
     useToast,
     Input,
 } from "@chakra-ui/react";
-import { addNote, addTag, findNotes, findTags } from "../../db";
 import { AsyncCreatableSelect } from "chakra-react-select";
 import { useNavigate, useParams } from "react-router";
 
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import "./MDEditorStyles.css";
-import { updateNote } from "../../db/notes";
+import { NotesService } from "../../db/notesService";
+import { TagsService } from "../../db/tagsService";
 
 // TODO: Notes should have titles
 
@@ -45,7 +45,7 @@ export default function NoteForm() {
             return;
         }
 
-        findNotes({ id }).then(([note]) => {
+        NotesService.getNoteById(id).then((note) => {
             setText(note.text);
             setTags(note.tags);
             setTitle(note.title);
@@ -77,7 +77,7 @@ export default function NoteForm() {
     const inputErrors = textError || tagError || titleError;
 
     const _addNote = async () => {
-        const id = await addNote({ title, text, tags });
+        const { id } = await NotesService.addNote({ title, text, tags });
         toast({
             title: "Note created",
             description: "Your note has been saved",
@@ -89,7 +89,7 @@ export default function NoteForm() {
     };
 
     const _updateNote = async () => {
-        await updateNote(id, { title, text, tags });
+        await NotesService.updateNote({ id, title, text, tags });
         toast({
             title: "Note Updated",
             description: "Your note has been saved",
@@ -156,12 +156,12 @@ export default function NoteForm() {
                     closeMenuOnSelect={false}
                     size="md"
                     loadOptions={(value, callback) => {
-                        findTags({ value }).then((values) => {
+                        TagsService.findTags(value).then((values) => {
                             callback(values.map((tag) => ({ value: tag.id, label: tag.value })));
                         });
                     }}
                     onCreateOption={async (value) => {
-                        const id = await addTag(value);
+                        const { id } = TagsService.addTag({ value });
                         setTags([...tags, { value, id }]);
                     }}
                     onChange={(value) => {

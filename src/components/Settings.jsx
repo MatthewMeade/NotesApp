@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import ColorModeSwitcher from "../ColorModeSwitcher";
 
 import { Container, Heading, Button, Box, useToast, HStack } from "@chakra-ui/react";
-import { db } from "../db";
+import { TagsService } from "../db/tagsService";
+import { NotesService } from "../db/notesService";
 
 export default function Settings() {
     const toast = useToast();
@@ -11,19 +12,18 @@ export default function Settings() {
     const [tags, settags] = useState(0);
 
     useEffect(() => {
-        db.notes.count(setnotes);
-        db.tags.count(settags);
+        TagsService.count().then(settags);
+        NotesService.count().then(setnotes);
     }, []);
 
     const deleteAllData = async () => {
         // TODO: Confirm first
 
-        // TODO: Abstract this
-        await db.tags.clear();
-        await db.notes.clear();
+        TagsService.deleteAll();
+        NotesService.deleteAll();
 
-        db.notes.count(setnotes);
-        db.tags.count(settags);
+        setnotes(0);
+        settags(0);
 
         toast({
             title: "Data Deleted",
