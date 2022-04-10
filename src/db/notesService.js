@@ -16,6 +16,8 @@ const BASE_NOTE_QUERY = {
 
 // TODO: Fix PKs to not need parseInt everywhere
 
+// TODO: Abstract stuff into BaseService
+
 export class NotesService extends BaseService {
     static tableName = "Notes";
 

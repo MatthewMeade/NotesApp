@@ -6,7 +6,6 @@ export default function ColorModeSwitcher(props) {
     const { toggleColorMode } = useColorMode();
     const text = useColorModeValue("light", "light");
     const SwitchIcon = useColorModeValue(FaSun, FaMoon);
-    console.log({ text });
 
     return (
         <IconButton

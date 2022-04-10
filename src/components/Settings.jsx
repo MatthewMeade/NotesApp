@@ -1,29 +1,61 @@
+import { DeleteIcon } from "@chakra-ui/icons";
+import { Box, Button, Container, Heading, HStack, useToast, VStack } from "@chakra-ui/react";
+import download from "downloadjs";
 import React, { useEffect, useState } from "react";
 import ColorModeSwitcher from "../ColorModeSwitcher";
-
-import { Container, Heading, Button, Box, useToast, HStack } from "@chakra-ui/react";
-import { TagsService } from "../db/tagsService";
 import { NotesService } from "../db/notesService";
+import { TagsService } from "../db/tagsService";
+import ConfirmableButton from "./ConfirmableButton";
 
 export default function Settings() {
-    const toast = useToast();
-
     const [notes, setnotes] = useState(0);
     const [tags, settags] = useState(0);
 
-    useEffect(() => {
+    const updateCounts = () => {
         TagsService.count().then(settags);
         NotesService.count().then(setnotes);
+    };
+
+    useEffect(() => {
+        updateCounts();
     }, []);
 
+    return (
+        <Container>
+            <Heading mb="1em" mt="5px">
+                Settings:
+            </Heading>
+
+            <VStack align="left" gap={10}>
+                <HStack>
+                    {/* TODO: Light mode styling needs work */}
+                    <p>Color mode</p>
+                    <ColorModeSwitcher />
+                </HStack>
+
+                <VStack align="left" gap={5}>
+                    <Heading size="lg">Manage Data:</Heading>
+
+                    <Box>
+                        <p>Notes: {notes}</p>
+                        <p>Tags: {tags}</p>
+                    </Box>
+
+                    <ExportButton />
+                    <DeleteButton updateCounts={updateCounts} />
+                </VStack>
+            </VStack>
+        </Container>
+    );
+}
+
+const DeleteButton = ({ updateCounts }) => {
+    const toast = useToast();
     const deleteAllData = async () => {
-        // TODO: Confirm first
+        await TagsService.deleteAll();
+        await NotesService.deleteAll();
 
-        TagsService.deleteAll();
-        NotesService.deleteAll();
-
-        setnotes(0);
-        settags(0);
+        updateCounts();
 
         toast({
             title: "Data Deleted",
@@ -35,28 +67,28 @@ export default function Settings() {
     };
 
     return (
-        <Container>
-            <Heading mb="1em" mt="5px">
-                Settings:
-            </Heading>
-
-            <HStack my={10}>
-                {/* TODO: Light mode styling needs work */}
-                <p>Color mode</p>
-                <ColorModeSwitcher />
-            </HStack>
-
-            <Box>
-                <p>Notes: {notes}</p>
-                <p>Tags: {tags}</p>
-            </Box>
-
-            <Box>
-                Delete All Data:{" "}
-                <Button colorScheme={"red"} size={"sm"} onClick={deleteAllData}>
-                    Delete All Data
-                </Button>
-            </Box>
-        </Container>
+        <ConfirmableButton
+            title="Delete All Data"
+            body="Are you sure you want to delete all application data? This can not be undone, you may want to export your data first"
+            button={{
+                icon: <DeleteIcon />,
+                label: "Delete All Data",
+                color: "red",
+            }}
+            onConfirm={() => deleteAllData()}
+        />
     );
-}
+};
+
+const ExportButton = () => {
+    const doExport = async () => {
+        const notes = await NotesService.getAllNotes();
+        const tags = await TagsService.getAllTags();
+
+        const timestamp = new Date().toISOString().replaceAll("T", "_").replaceAll(":", "-").slice(0, -8);
+
+        download(JSON.stringify({ notes, tags }, null, 2), `NotesAppExport_${timestamp}.json`, "text/json");
+    };
+
+    return <Button onClick={() => doExport()}>Export Data</Button>;
+};

@@ -77,7 +77,7 @@ export default function NoteForm() {
     const inputErrors = textError || tagError || titleError;
 
     const _addNote = async () => {
-        const { id } = await NotesService.addNote({ title, text, tags });
+        const [newNote] = await NotesService.addNote({ title, text, tags });
         toast({
             title: "Note created",
             description: "Your note has been saved",
@@ -85,7 +85,7 @@ export default function NoteForm() {
             duration: 9000,
             isClosable: true,
         });
-        navigate(`/note/${id}`);
+        navigate(`/note/${newNote.id}`);
     };
 
     const _updateNote = async () => {

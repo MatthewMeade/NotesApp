@@ -12,6 +12,7 @@
     "@testing-library/user-event": "^12.8.3",
     "chakra-react-select": "^3.1.2",
     "chakra-ui-markdown-renderer": "^4.0.0",
+    "downloadjs": "^1.4.7",
     "easymde": "^2.16.1",
     "framer-motion": "^4.1.17",
     "jsstore": "^4.3.8",
