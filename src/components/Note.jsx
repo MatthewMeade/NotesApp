@@ -33,7 +33,7 @@ export default function Note({ note: _note, controlType = "page" }) {
             return;
         }
 
-        NotesService.getNoteById(id).then((loadedNote) => {
+        NotesService.getById(id).then((loadedNote) => {
             if (!loadedNote) {
                 return navigate("/"); // TODO: 404
             }
@@ -52,7 +52,7 @@ export default function Note({ note: _note, controlType = "page" }) {
     const [isOpen, setOpen] = useState(true);
 
     const onDelete = async () => {
-        await NotesService.removeNote(id);
+        await NotesService.delete(id);
         toast({
             title: "Note Deleted",
             description: "Your note has been Deleted",

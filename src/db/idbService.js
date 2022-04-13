@@ -19,7 +19,7 @@ const getDatabase = () => {
         columns: {
             id: {
                 primaryKey: true,
-                autoIncrement: true,
+                dataType: DATA_TYPE.String,
             },
             title: {
                 notNull: true,

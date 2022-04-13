@@ -45,7 +45,7 @@ export default function NoteForm() {
             return;
         }
 
-        NotesService.getNoteById(id).then((note) => {
+        NotesService.getById(id).then((note) => {
             setText(note.text);
             setTags(note.tags);
             setTitle(note.title);
@@ -77,7 +77,7 @@ export default function NoteForm() {
     const inputErrors = textError || tagError || titleError;
 
     const _addNote = async () => {
-        const [newNote] = await NotesService.addNote({ title, text, tags });
+        const newNote = await NotesService.add({ title, text, tags });
         toast({
             title: "Note created",
             description: "Your note has been saved",
@@ -89,7 +89,7 @@ export default function NoteForm() {
     };
 
     const _updateNote = async () => {
-        await NotesService.updateNote({ id, title, text, tags });
+        await NotesService.update({ id, title, text, tags });
         toast({
             title: "Note Updated",
             description: "Your note has been saved",
@@ -156,12 +156,12 @@ export default function NoteForm() {
                     closeMenuOnSelect={false}
                     size="md"
                     loadOptions={(value, callback) => {
-                        TagsService.findTags(value).then((values) => {
+                        TagsService.find({ value }).then((values) => {
                             callback(values.map((tag) => ({ value: tag.id, label: tag.value })));
                         });
                     }}
                     onCreateOption={async (value) => {
-                        const { id } = TagsService.addTag({ value });
+                        const { id } = await TagsService.add({ value });
                         setTags([...tags, { value, id }]);
                     }}
                     onChange={(value) => {

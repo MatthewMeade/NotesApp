@@ -25,7 +25,7 @@ export default function NotesList() {
 
         // findNotes({ title: title, tags: tags.map((t) => t.id), date, fillTags: true }).then(setNotes);
 
-        NotesService.findNotes({ title: title, tags: tags.map((t) => t.id), date }).then(setNotes);
+        NotesService.find({ title: title, tags: tags.map((t) => t.id), date }).then(setNotes);
     }, [tags, title, dateFrom, dateTo]);
 
     return (
@@ -85,7 +85,7 @@ export default function NotesList() {
                         closeMenuOnSelect={false}
                         size="md"
                         loadOptions={(value, callback) => {
-                            TagsService.findTags(value).then((values) => {
+                            TagsService.find({ value }).then((values) => {
                                 callback(values.map((tag) => ({ value: tag.id, label: tag.value })));
                             });
                         }}

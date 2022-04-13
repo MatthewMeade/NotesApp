@@ -82,8 +82,8 @@ const DeleteButton = ({ updateCounts }) => {
 
 const ExportButton = () => {
     const doExport = async () => {
-        const notes = await NotesService.getAllNotes();
-        const tags = await TagsService.getAllTags();
+        const notes = await NotesService.getAll();
+        const tags = await TagsService.getAll();
 
         const timestamp = new Date().toISOString().replaceAll("T", "_").replaceAll(":", "-").slice(0, -8);
 

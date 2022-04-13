@@ -1,142 +1,97 @@
 import { BaseService } from "./baseService";
-
-const BASE_NOTE_QUERY = {
-    from: "Notes",
-    flatten: ["tags"],
-    join: {
-        with: "Tags",
-        on: "Notes.tags=Tags.id",
-        as: {
-            id: "tagId",
-            value: "tagValue",
-        },
-    },
-};
-
-
-// TODO: Fix PKs to not need parseInt everywhere
-
-// TODO: Abstract stuff into BaseService
+import { v4 as uuid } from "uuid";
 
 export class NotesService extends BaseService {
     static tableName = "Notes";
 
-    static count() {
-        return this.connection.count({
-            from: this.tableName,
-        });
-    }
-
-    static addNote(note) {
-        const _note = { ...note, createdDate: new Date(), updatedDate: new Date() };
-        return this.connection.insert({
-            into: this.tableName,
-            values: [convertTagsToIds(_note)],
-            return: true,
-            upsert: true,
-        });
-    }
-
-    static removeNote(id) {
-        return this.connection.remove({
-            from: this.tableName,
-            where: {
-                id: parseInt(id),
+    static baseQuery = {
+        from: "Notes",
+        flatten: ["tags"],
+        join: {
+            with: "Tags",
+            on: "Notes.tags=Tags.id",
+            as: {
+                id: "tagId",
+                value: "tagValue",
             },
-        });
-    }
+        },
+    };
 
-    static updateNote(note) {
-        const _note = convertTagsToIds({ ...note, id: parseInt(note.id), updatedDate: new Date() });
-        return this.connection.update({
-            in: this.tableName,
-            set: _note,
-            where: {
-                id: _note.id
-            },
-        });
-    }
-
-    static getAllNotes() {
-        return this.connection.select({ ...BASE_NOTE_QUERY }).then(groupTablesCollectTags);
-    }
-
-    static async getNoteById(id) {
-        id = parseInt(id);
-        return (await this.findNotes({ id }))[0];
-    }
-
-    static findNotes({ id, title, text, tags, date: { start, end } = {} }) {
-        const query = { ...BASE_NOTE_QUERY };
-
-        if (title || text || tags?.length || start || end || id) {
-            query.where = {};
-        }
-
+    static find({ id, title, text, tags, date: { start, end } = {} }) {
         if (id) {
-            id = parseInt(id);
-            query.where.id = id;
+            return super.getById(id);
         }
+
+        const where = {};
 
         if (tags && tags.length > 0) {
-            query.where.tags = {
+            where.tags = {
                 in: tags,
             };
         }
 
         if (title) {
-            query.where.title = {
+            where.title = {
                 regex: new RegExp(title, "i"),
             };
         }
 
         if (text) {
-            query.where.text = {
+            where.text = {
                 regex: new RegExp(text, "i"),
             };
         }
 
         if (start || end) {
-            query.where.updatedDate = {};
+            where.updatedDate = {};
 
             if (start) {
-                query.where.updatedDate[">="] = start;
+                where.updatedDate[">="] = start;
             }
 
             if (end) {
-                query.where.updatedDate["<="] = end;
+                where.updatedDate["<="] = end;
             }
         }
 
-        return this.connection.select(query).then(groupTablesCollectTags);
+        return super.find(where);
     }
 
-    static deleteAll() {
-        return this.connection.clear(this.tableName);
+    static preproccesUpdate(note) {
+        note = { ...note };
+
+        if (!note.id) {
+            note.id = uuid();
+        }
+
+        if (!note.createdDate) {
+            note.createdDate = new Date();
+        }
+
+        note.updatedDate = new Date();
+
+        note.tags = note.tags?.map(({ id }) => id);
+
+        return note;
+    }
+
+    static processResults(rows) {
+        const reduced = rows.reduce((acc, cur) => {
+            if (!acc[cur.id]) {
+                acc[cur.id] = { ...cur, tags: [] };
+                delete acc[cur.id].tagId;
+                delete acc[cur.id].tagValue;
+            }
+
+            acc[cur.id].tags.push({ id: cur.tagId, value: cur.tagValue });
+
+            return acc;
+        }, {});
+
+        return Object.values(reduced);
     }
 }
 
-const convertTagsToIds = (note) => {
-    return {
-        ...note,
-        tags: note.tags.map(({ id }) => id),
-    };
-};
-
-const groupTablesCollectTags = (rows) => {
-    const reduced = rows.reduce((acc, cur) => {
-        if (!acc[cur.id]) {
-            acc[cur.id] = { ...cur, tags: [] };
-            delete acc[cur.id].tagId;
-            delete acc[cur.id].tagValue;
-        }
-
-        acc[cur.id].tags.push({ id: cur.tagId, value: cur.tagValue });
-
-        return acc;
-    }, {});
-
-    return Object.values(reduced);
-};
-
-window.NotesService = NotesService; // TODO: Only do this in dev mode
+if (process.env.NODE_ENV === "development") {
+    window.NotesService = NotesService;
+}
