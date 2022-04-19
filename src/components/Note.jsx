@@ -43,7 +43,7 @@ export default function Note({ note: _note, controlType = "page" }) {
 
     const isPage = controlType === "page";
 
-    const cdate = new Date(note?.creationDate);
+    const cdate = new Date(note?.createdDate);
     const cdateStr = `${cdate.toLocaleDateString()} - ${cdate.toLocaleTimeString()}`;
 
     const udate = new Date(note?.updatedDate);
@@ -69,7 +69,10 @@ export default function Note({ note: _note, controlType = "page" }) {
                 <Box w="100%" pt={2}>
                     <VStack align="left" onClick={() => setOpen(!isOpen)} borderBottom="1px solid grey">
                         <HStack alignItems={"center"} justifyContent="space-between">
-                            <Heading>{note.title}</Heading> {/* Todo: make this editable*/}
+                            <Heading size="md" isTruncated>
+                                {note.title}
+                            </Heading>{" "}
+                            {/* Todo: make this editable*/}
                             <HStack>
                                 <Link to={`/note/${note.id}/edit`}>
                                     <Button leftIcon={<EditIcon />} bg="none">
