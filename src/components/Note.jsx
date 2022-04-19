@@ -43,11 +43,8 @@ export default function Note({ note: _note, controlType = "page" }) {
 
     const isPage = controlType === "page";
 
-    const cdate = new Date(note?.createdDate);
-    const cdateStr = `${cdate.toLocaleDateString()} - ${cdate.toLocaleTimeString()}`;
-
-    const udate = new Date(note?.updatedDate);
-    const udateStr = `${udate.toLocaleDateString()} - ${udate.toLocaleTimeString()}`;
+    const date = new Date(note?.updatedDate);
+    const dateStr = `${date.toDateString()} ${date.toLocaleTimeString()}`;
 
     const [isOpen, setOpen] = useState(true);
 
@@ -63,58 +60,61 @@ export default function Note({ note: _note, controlType = "page" }) {
         navigate("/");
     };
 
+    const controls = (
+        <HStack justifyContent="right" py={isPage ? 3 : 0}>
+            <Link to={`/note/${note.id}/edit`}>
+                <Button leftIcon={<EditIcon />} size="md">
+                    Edit
+                </Button>
+            </Link>
+
+            {isPage && (
+                <ConfirmableButton
+                    title="Delete Note"
+                    body="Are you sure you want to delete this note?"
+                    button={{
+                        icon: <DeleteIcon />,
+                        label: "Delete",
+                        color: "red",
+                    }}
+                    onConfirm={onDelete}
+                />
+            )}
+
+            {!isPage && (
+                <Link to={`/note/${note.id}`}>
+                    <Button leftIcon={<ViewIcon />} bg="none">
+                        View Note
+                    </Button>
+                </Link>
+            )}
+        </HStack>
+    );
+
     return (
         <>
             <Container maxW="container.xl">
+                {isPage && controls}
                 <Box w="100%" pt={2}>
                     <VStack align="left" onClick={() => setOpen(!isOpen)} borderBottom="1px solid grey">
                         <HStack alignItems={"center"} justifyContent="space-between">
-                            <Heading size="md" isTruncated>
+                            <Heading size="md" isTruncated={!isPage}>
                                 {note.title}
-                            </Heading>{" "}
-                            {/* Todo: make this editable*/}
-                            <HStack>
-                                <Link to={`/note/${note.id}/edit`}>
-                                    <Button leftIcon={<EditIcon />} bg="none">
-                                        Edit
-                                    </Button>
-                                </Link>
+                            </Heading>
 
-                                {isPage && (
-                                    <ConfirmableButton
-                                        title="Delete Note"
-                                        body="Are you sure you want to delete this note?"
-                                        button={{
-                                            icon: <DeleteIcon />,
-                                            label: "Delete",
-                                            color: "red",
-                                        }}
-                                        onConfirm={onDelete}
-                                    />
-                                )}
-
-                                {/* TODO: Make this on click of the title */}
-                                {!isPage && (
-                                    <Link to={`/note/${note.id}`}>
-                                        <Button leftIcon={<ViewIcon />} bg="none">
-                                            View Note
-                                        </Button>
-                                    </Link>
-                                )}
-                            </HStack>
+                            {!isPage && controls}
                         </HStack>
 
-                        <Flex wrap="wrap" gap={1} pb={2}>
-                            <p>Tags: </p>
-                            {note.tags.map((tag) => (
-                                <Tag size="sm" key={tag.id}>
-                                    {tag.value}
-                                </Tag>
-                            ))}
-                        </Flex>
                         <Flex justify="space-between">
-                            {isPage && <Text as="i">Created: {cdateStr}</Text>}
-                            <Text as="i">Last Updated: {udateStr}</Text>
+                            <Flex wrap="wrap" gap={1} pb={2}>
+                                <p>Tags: </p>
+                                {note.tags.map((tag) => (
+                                    <Tag size="sm" key={tag.id}>
+                                        {tag.value}
+                                    </Tag>
+                                ))}
+                            </Flex>
+                            <Text as="i">{dateStr}</Text>
                         </Flex>
                     </VStack>
 

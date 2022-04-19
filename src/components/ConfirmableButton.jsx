@@ -2,7 +2,7 @@ import { Button, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import ConfirmDialog from "./ConfirmDialog";
 
-export default function ConfirmableButton({ title, body, button: { icon, label, color }, onConfirm }) {
+export default function ConfirmableButton({ title, body, button: { icon, label, color }, onConfirm, size = "md" }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const _onConfirm = () => {
@@ -20,7 +20,7 @@ export default function ConfirmableButton({ title, body, button: { icon, label, 
                 onConfirm={_onConfirm}
                 confirmButton={{ icon, label, color }}
             />
-            <Button leftIcon={icon} onClick={onOpen} colorScheme={color}>
+            <Button leftIcon={icon} onClick={onOpen} colorScheme={color} size={size}>
                 {label}
             </Button>
         </>
