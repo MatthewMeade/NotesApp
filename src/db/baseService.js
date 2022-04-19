@@ -8,11 +8,16 @@ export class BaseService {
         });
     }
 
-    static async add(value) {
+    static async add(values) {
+        if (!Array.isArray(values)) {
+            values = [this.preproccesUpdate(values)];
+        } else {
+            values = values.map(this.preproccesUpdate);
+        }
         return (
             await this.connection.insert({
                 into: this.tableName,
-                values: [this.preproccesUpdate(value)],
+                values,
                 return: true,
                 upsert: true,
             })

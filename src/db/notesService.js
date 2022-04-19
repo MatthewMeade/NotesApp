@@ -65,10 +65,10 @@ export class NotesService extends BaseService {
         }
 
         if (!note.createdDate) {
-            note.createdDate = new Date();
+            note.createdDate = Date.now();
         }
 
-        note.updatedDate = new Date();
+        note.updatedDate = note.updatedDate ?? Date.now(); // Support custom updatedDate for testing
 
         note.tags = note.tags?.map(({ id }) => id);
 

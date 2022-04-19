@@ -5,11 +5,17 @@ import React, { useEffect, useState } from "react";
 import ColorModeSwitcher from "../ColorModeSwitcher";
 import { NotesService } from "../db/notesService";
 import { TagsService } from "../db/tagsService";
+import { populateDB } from "../util/populateDB";
 import ConfirmableButton from "./ConfirmableButton";
 
 export default function Settings() {
     const [notes, setnotes] = useState(0);
     const [tags, settags] = useState(0);
+
+    const generateData = async () => {
+        await populateDB();
+        updateCounts();
+    };
 
     const updateCounts = () => {
         TagsService.count().then(settags);
@@ -43,13 +49,14 @@ export default function Settings() {
 
                     <ExportButton />
                     <DeleteButton updateCounts={updateCounts} />
+                    <DeleteButton updateCounts={generateData} buttonText="Regenerate Data" />
                 </VStack>
             </VStack>
         </Container>
     );
 }
 
-const DeleteButton = ({ updateCounts }) => {
+const DeleteButton = ({ updateCounts, buttonText = "Delete All Data" }) => {
     const toast = useToast();
     const deleteAllData = async () => {
         await TagsService.deleteAll();
@@ -68,11 +75,11 @@ const DeleteButton = ({ updateCounts }) => {
 
     return (
         <ConfirmableButton
-            title="Delete All Data"
+            title={buttonText}
             body="Are you sure you want to delete all application data? This can not be undone, you may want to export your data first"
             button={{
                 icon: <DeleteIcon />,
-                label: "Delete All Data",
+                label: buttonText,
                 color: "red",
             }}
             onConfirm={() => deleteAllData()}

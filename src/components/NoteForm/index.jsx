@@ -20,8 +20,6 @@ import "./MDEditorStyles.css";
 import { NotesService } from "../../db/notesService";
 import { TagsService } from "../../db/tagsService";
 
-// TODO: Notes should have titles
-
 export default function NoteForm() {
     let { id } = useParams();
 
@@ -53,7 +51,7 @@ export default function NoteForm() {
         });
     }, [id]);
 
-    // Slightly smarter validation
+    // Slightly smarter validation, don't warn until after edited
     useEffect(() => {
         const val = { ...doValidation };
 

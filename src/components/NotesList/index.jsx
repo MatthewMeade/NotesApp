@@ -23,8 +23,6 @@ export default function NotesList() {
             end: dateTo ? new Date(Date.parse(dateTo) + 86400000) : undefined, // end of day
         };
 
-        // findNotes({ title: title, tags: tags.map((t) => t.id), date, fillTags: true }).then(setNotes);
-
         NotesService.find({ title: title, tags: tags.map((t) => t.id), date }).then(setNotes);
     }, [tags, title, dateFrom, dateTo]);
 

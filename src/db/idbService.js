@@ -31,10 +31,10 @@ const getDatabase = () => {
             },
             createdDate: {
                 notNull: true,
-                dataType: DATA_TYPE.DateTime,
+                dataType: DATA_TYPE.Number,
             },
             updatedDate: {
-                dataType: DATA_TYPE.DateTime,
+                dataType: DATA_TYPE.Number,
                 notNull: true,
             },
             tags: {
