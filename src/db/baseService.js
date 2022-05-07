@@ -1,4 +1,5 @@
-import { idbCon } from "./idbService";
+import { idbCon } from './idbService';
+
 export class BaseService {
     static connection = idbCon;
 
@@ -28,7 +29,7 @@ export class BaseService {
         return this.connection.remove({
             from: this.tableName,
             where: {
-                id: id,
+                id,
             },
         });
     }
@@ -58,16 +59,18 @@ export class BaseService {
                 ...(this.baseQuery ?? {}),
                 from: this.tableName,
                 where: {
-                    id: id,
+                    id,
                 },
-            })
+            }),
         )[0];
     }
 
-    static find(query = {}) {
+    static find(query = {}, { skip, limit } = {}, count = false) {
         if (Object.keys(query).length === 0) {
             return this.getAll();
         }
+
+        
         return this.connection
             .select({
                 from: this.tableName,
@@ -75,6 +78,8 @@ export class BaseService {
                 where: {
                     ...query,
                 },
+                skip,
+                limit,
             })
             .then(this.processResults);
     }

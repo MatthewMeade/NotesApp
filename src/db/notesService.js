@@ -1,23 +1,25 @@
-import { BaseService } from "./baseService";
-import { v4 as uuid } from "uuid";
+import { v4 as uuid } from 'uuid';
+import { BaseService } from './baseService';
 
 export class NotesService extends BaseService {
-    static tableName = "Notes";
+    static tableName = 'Notes';
 
     static baseQuery = {
-        from: "Notes",
-        flatten: ["tags"],
+        from: 'Notes',
+        flatten: ['tags'],
         join: {
-            with: "Tags",
-            on: "Notes.tags=Tags.id",
+            with: 'Tags',
+            on: 'Notes.tags=Tags.id',
             as: {
-                id: "tagId",
-                value: "tagValue",
+                id: 'tagId',
+                value: 'tagValue',
             },
         },
     };
 
-    static find({ id, title, text, tags, date: { start, end } = {} }) {
+    static find({
+        id, title, text, tags, date: { start, end } = {},
+    }, { skip, limit } = {},count = false) {
         if (id) {
             return super.getById(id);
         }
@@ -32,13 +34,13 @@ export class NotesService extends BaseService {
 
         if (title) {
             where.title = {
-                regex: new RegExp(title, "i"),
+                regex: new RegExp(title, 'i'),
             };
         }
 
         if (text) {
             where.text = {
-                regex: new RegExp(text, "i"),
+                regex: new RegExp(text, 'i'),
             };
         }
 
@@ -46,19 +48,19 @@ export class NotesService extends BaseService {
             where.updatedDate = {};
 
             if (start) {
-                where.updatedDate[">="] = start;
+                where.updatedDate['>='] = start;
             }
 
             if (end) {
-                where.updatedDate["<="] = end;
+                where.updatedDate['<='] = end;
             }
         }
 
-        return super.find(where);
+        return super.find(where, { skip, limit });
     }
 
-    static preproccesUpdate(note) {
-        note = { ...note };
+    static preproccesUpdate(data) {
+        const note = { ...data };
 
         if (!note.id) {
             note.id = uuid();
@@ -92,6 +94,6 @@ export class NotesService extends BaseService {
     }
 }
 
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === 'development') {
     window.NotesService = NotesService;
 }

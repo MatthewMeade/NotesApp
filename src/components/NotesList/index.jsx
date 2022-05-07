@@ -1,20 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { Container, FormLabel, Grid, GridItem, VStack, Input, HStack } from "@chakra-ui/react";
+import React, { useEffect, useState, useCallback } from 'react';
+import {
+    Container, FormLabel, Grid, GridItem, VStack, Input, HStack,
+} from '@chakra-ui/react';
+import InfiniteScroll from 'react-infinite-scroller';
 
-import { AsyncSelect } from "chakra-react-select";
-import Note from "../Note";
+import { AsyncSelect } from 'chakra-react-select';
+import Note from '../Note';
 
-import "./styles.css";
-import { NotesService } from "../../db/notesService";
-import { TagsService } from "../../db/tagsService";
+import './styles.css';
+import { NotesService } from '../../db/notesService';
+import { TagsService } from '../../db/tagsService';
 
 // TODO: Paging
 export default function NotesList() {
+    // Search parameters
     const [tags, setTags] = useState([]);
-    const [title, setTitle] = useState("");
-    const [dateFrom, setDateFrom] = useState("");
-    const [dateTo, setDateTo] = useState("");
+    const [title, setTitle] = useState('');
+    const [dateFrom, setDateFrom] = useState('');
+    const [dateTo, setDateTo] = useState('');
 
+    // Paging
+    const [curPage, setCurPage] = useState(0);
+
+    // Rendered Notes
     const [notes, setNotes] = useState([]);
 
     useEffect(() => {
@@ -23,19 +31,30 @@ export default function NotesList() {
             end: dateTo ? new Date(Date.parse(dateTo) + 86400000) : undefined, // end of day
         };
 
-        NotesService.find({ title: title, tags: tags.map((t) => t.id), date }).then(setNotes);
+        setNotes([]);
+
+        NotesService.find({ title, tags: tags.map((t) => t.id), date }).then(setNotes);
     }, [tags, title, dateFrom, dateTo]);
+
+    const loadMore = useCallback(
+        () => {
+            first;
+        },
+        [],
+    );
 
     return (
         <Container maxW="container.xl" bg="rgba(0,0,0,0.05)" pb={10} pt={5}>
             {/* <Heading>My Notes:</Heading> */}
 
             <Grid templateColumns="min-content auto" gap={6} alignItems="center" mb={10}>
+
                 <GridItem>
                     <FormLabel htmlFor="title" pt="4px">
                         Title:
                     </FormLabel>
                 </GridItem>
+
                 <GridItem>
                     <Input
                         placeholder="Search by title..."
@@ -44,9 +63,11 @@ export default function NotesList() {
                         onChange={(e) => setTitle(e.target.value)}
                     />
                 </GridItem>
+
                 <GridItem>
                     <FormLabel pt="4px">Date:</FormLabel>
                 </GridItem>
+
                 <GridItem>
                     <HStack>
                         <Input
@@ -67,11 +88,13 @@ export default function NotesList() {
                         />
                     </HStack>
                 </GridItem>
+
                 <GridItem>
                     <FormLabel htmlFor="tags" pt="4px">
                         Tags:
                     </FormLabel>
                 </GridItem>
+
                 <GridItem>
                     <AsyncSelect
                         id="tags"
@@ -90,16 +113,19 @@ export default function NotesList() {
                         onChange={(value) => {
                             setTags(value.map((tag) => ({ value: tag.label, id: tag.value })));
                         }}
-                        noOptionsMessage={() => "Type to find or add tags"}
+                        noOptionsMessage={() => 'Type to find or add tags'}
                     />
                 </GridItem>
             </Grid>
 
-            <VStack gap={10}>
-                {notes.map((note) => (
-                    <Note note={note} key={note.id} controlType="list" />
-                ))}
-            </VStack>
+            <InfiniteScroll>
+                <VStack gap={10}>
+                    {notes.map((note) => (
+                        <Note note={note} key={note.id} controlType="list" />
+                    ))}
+                </VStack>
+            </InfiniteScroll>
+
         </Container>
     );
 }
