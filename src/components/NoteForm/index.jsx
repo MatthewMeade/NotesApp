@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from 'react';
 
 import {
     Container,
@@ -9,35 +9,35 @@ import {
     Center,
     FormErrorMessage,
     useToast,
-    Input,
-} from "@chakra-ui/react";
-import { AsyncCreatableSelect } from "chakra-react-select";
-import { useNavigate, useParams } from "react-router";
+    Input
+} from '@chakra-ui/react';
+import { AsyncCreatableSelect } from 'chakra-react-select';
+import { useNavigate, useParams } from 'react-router';
 
-import SimpleMDE from "react-simplemde-editor";
-import "easymde/dist/easymde.min.css";
-import "./MDEditorStyles.css";
-import { NotesService } from "../../db/notesService";
-import { TagsService } from "../../db/tagsService";
+import SimpleMDE from 'react-simplemde-editor';
+import 'easymde/dist/easymde.min.css';
+import './MDEditorStyles.css';
+import NotesService from '../../db/notesService';
+import TagsService from '../../db/tagsService';
 
 export default function NoteForm() {
-    let { id } = useParams();
+    const { id } = useParams();
 
-    const [text, setText] = useState("");
-    const [title, setTitle] = useState("");
+    const [text, setText] = useState('');
+    const [title, setTitle] = useState('');
     const [tags, setTags] = useState([]);
 
     const [doValidation, setDoValidation] = useState({ text: false, tags: false, title: false });
 
     const toast = useToast();
 
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
     // Load note when editing
     useEffect(() => {
         if (!id) {
-            setText("");
-            setTitle("");
+            setText('');
+            setTitle('');
             setTags([]);
             setDoValidation({ text: false, tags: false, title: false });
             return;
@@ -55,11 +55,11 @@ export default function NoteForm() {
     useEffect(() => {
         const val = { ...doValidation };
 
-        if (text !== "") {
+        if (text !== '') {
             val.text = true;
         }
 
-        if (title !== "") {
+        if (title !== '') {
             val.title = true;
         }
 
@@ -67,33 +67,35 @@ export default function NoteForm() {
             val.tags = true;
         }
         setDoValidation(val);
-    }, [text, tags, text]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [text, tags, text]);
 
-    const textError = text === "";
-    const titleError = title === "";
+    const textError = text === '';
+    const titleError = title === '';
     const tagError = tags.length === 0;
     const inputErrors = textError || tagError || titleError;
 
     const _addNote = async () => {
         const newNote = await NotesService.add({ title, text, tags });
         toast({
-            title: "Note created",
-            description: "Your note has been saved",
-            status: "success",
+            title: 'Note created',
+            description: 'Your note has been saved',
+            status: 'success',
             duration: 9000,
-            isClosable: true,
+            isClosable: true
         });
         navigate(`/note/${newNote.id}`);
     };
 
     const _updateNote = async () => {
-        await NotesService.update({ id, title, text, tags });
+        await NotesService.update({
+            id, title, text, tags
+        });
         toast({
-            title: "Note Updated",
-            description: "Your note has been saved",
-            status: "success",
+            title: 'Note Updated',
+            description: 'Your note has been saved',
+            status: 'success',
             duration: 9000,
-            isClosable: true,
+            isClosable: true
         });
         navigate(`/note/${id}`);
     };
@@ -101,26 +103,26 @@ export default function NoteForm() {
     const options = useMemo(
         () => ({
             spellChecker: false,
-            placeholder: "Write your note here...",
+            placeholder: 'Write your note here...',
             // TODO: Image Uploads
             // uploadImage: true,
             toolbar: [
-                "bold",
-                "italic",
-                "strikethrough",
-                "heading",
-                "code",
-                "quote",
-                "unordered-list",
-                "ordered-list",
-                "link",
-                "image",
-                "table",
-                "|",
-                "clean-block",
-                "|",
-                "guide",
-            ],
+                'bold',
+                'italic',
+                'strikethrough',
+                'heading',
+                'code',
+                'quote',
+                'unordered-list',
+                'ordered-list',
+                'link',
+                'image',
+                'table',
+                '|',
+                'clean-block',
+                '|',
+                'guide'
+            ]
         }),
         []
     );
@@ -128,7 +130,9 @@ export default function NoteForm() {
     return (
         <Container maxW="container.xl">
             <Heading mb="1em" mt="5px">
-                {id ? "Edit" : "Add"} Note:
+                {id ? 'Edit' : 'Add'}
+                {' '}
+                Note:
             </Heading>
 
             <FormControl mb="2em" isInvalid={doValidation.title && titleError}>
@@ -159,24 +163,24 @@ export default function NoteForm() {
                         });
                     }}
                     onCreateOption={async (value) => {
-                        const { id } = await TagsService.add({ value });
-                        setTags([...tags, { value, id }]);
+                        const { id: tagID } = await TagsService.add({ value });
+                        setTags([...tags, { value, tagID }]);
                     }}
                     onChange={(value) => {
                         setTags(value.map((tag) => ({ value: tag.label, id: tag.value })));
                     }}
-                    noOptionsMessage={() => "Type to find or add tags"}
+                    noOptionsMessage={() => 'Type to find or add tags'}
                 />
                 <FormErrorMessage>At least one tag is required</FormErrorMessage>
             </FormControl>
 
             <Center>
                 {id ? (
-                    <Button colorScheme={"green"} disabled={inputErrors} onClick={_updateNote}>
+                    <Button colorScheme="green" disabled={inputErrors} onClick={_updateNote}>
                         Save Note
                     </Button>
                 ) : (
-                    <Button colorScheme={"green"} disabled={inputErrors} onClick={_addNote}>
+                    <Button colorScheme="green" disabled={inputErrors} onClick={_addNote}>
                         Add Note
                     </Button>
                 )}

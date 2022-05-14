@@ -1,29 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { Container, FormLabel, Grid, GridItem, VStack, Input, HStack } from "@chakra-ui/react";
+import React, { useEffect, useState } from 'react';
+import {
+    Container, FormLabel, Grid, GridItem, VStack, Input, HStack
+} from '@chakra-ui/react';
 
-import { AsyncSelect } from "chakra-react-select";
-import Note from "../Note";
+import { AsyncSelect } from 'chakra-react-select';
+import Note from '../Note';
 
-import "./styles.css";
-import { NotesService } from "../../db/notesService";
-import { TagsService } from "../../db/tagsService";
+import './styles.css';
+import NotesService from '../../db/notesService';
+import TagsService from '../../db/tagsService';
 
 // TODO: Paging
 export default function NotesList() {
     const [tags, setTags] = useState([]);
-    const [title, setTitle] = useState("");
-    const [dateFrom, setDateFrom] = useState("");
-    const [dateTo, setDateTo] = useState("");
+    const [title, setTitle] = useState('');
+    const [dateFrom, setDateFrom] = useState('');
+    const [dateTo, setDateTo] = useState('');
 
     const [notes, setNotes] = useState([]);
 
     useEffect(() => {
         const date = {
             start: dateFrom ? new Date(dateFrom) : undefined,
-            end: dateTo ? new Date(Date.parse(dateTo) + 86400000) : undefined, // end of day
+            end: dateTo ? new Date(Date.parse(dateTo) + 86400000) : undefined // end of day
         };
 
-        NotesService.find({ title: title, tags: tags.map((t) => t.id), date }).then(setNotes);
+        NotesService.find({ title, tags: tags.map((t) => t.id), date }).then(setNotes);
     }, [tags, title, dateFrom, dateTo]);
 
     return (
@@ -90,7 +92,7 @@ export default function NotesList() {
                         onChange={(value) => {
                             setTags(value.map((tag) => ({ value: tag.label, id: tag.value })));
                         }}
-                        noOptionsMessage={() => "Type to find or add tags"}
+                        noOptionsMessage={() => 'Type to find or add tags'}
                     />
                 </GridItem>
             </Grid>

@@ -1,12 +1,10 @@
-/* eslint-disable import/no-webpack-loader-syntax */
 import { DATA_TYPE, Connection } from 'jsstore';
 
 const getWorkerPath = () => {
     if (process.env.NODE_ENV === 'development') {
         return require('file-loader?name=scripts/[name].[hash].js!jsstore/dist/jsstore.worker.js');
-    } else {
-        return require('file-loader?name=scripts/[name].[hash].js!jsstore/dist/jsstore.worker.min.js');
     }
+    return require('file-loader?name=scripts/[name].[hash].js!jsstore/dist/jsstore.worker.min.js');
 };
 
 const workerPath = getWorkerPath().default;

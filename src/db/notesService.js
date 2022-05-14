@@ -1,9 +1,11 @@
-import { BaseService } from './BaseService';
+import BaseService from './BaseService';
 
-export class NotesService extends BaseService {
+export default class NotesService extends BaseService {
     static tableName = 'Notes';
 
-    static find ({ id, title, text, tags, date: { start, end } = {} } = {}) {
+    static find({
+        id, title, text, tags, date: { start, end } = {}
+    } = {}) {
         const selector = {};
 
         if (id) {
@@ -11,11 +13,11 @@ export class NotesService extends BaseService {
         }
 
         if (title) {
-            selector.title = { $regex: new RegExp(title, 'i') };
+            selector.title = { $regex: title };
         }
 
         if (text) {
-            selector.text = { $regex: new RegExp(text, 'i') };
+            selector.text = { $regex: text };
         }
 
         if (start || end) {
@@ -36,16 +38,16 @@ export class NotesService extends BaseService {
         return super.find(selector);
     }
 
-    static preproccesUpdate (note) {
-        note = { ...note };
+    static preproccesUpdate(note) {
+        const _note = { ...note };
 
-        note.tags = note.tags.map(tag => tag.id);
+        _note.tags = _note.tags.map((tag) => tag.id);
 
-        return super.preproccesUpdate(note);
+        return super.preproccesUpdate(_note);
     }
 
-    static processResults (rows) {
-        return rows.map(note => ({ ...note, tags: note.tags.map(tag => ({ ...tag, value: 'temp' })) }));
+    static processResults(rows) {
+        return rows.map((note) => ({ ...note, tags: note.tags.map((tag) => ({ ...tag, value: 'temp' })) }));
     }
 }
 

@@ -1,12 +1,14 @@
-import { DeleteIcon } from "@chakra-ui/icons";
-import { Box, Button, Container, Heading, HStack, useToast, VStack } from "@chakra-ui/react";
-import download from "downloadjs";
-import React, { useEffect, useState } from "react";
-import ColorModeSwitcher from "../ColorModeSwitcher";
-import { NotesService } from "../db/notesService";
-import { TagsService } from "../db/tagsService";
-import { populateDB } from "../util/populateDB";
-import ConfirmableButton from "./ConfirmableButton";
+import { DeleteIcon } from '@chakra-ui/icons';
+import {
+    Box, Button, Container, Heading, HStack, useToast, VStack
+} from '@chakra-ui/react';
+import download from 'downloadjs';
+import React, { useEffect, useState } from 'react';
+import ColorModeSwitcher from '../ColorModeSwitcher';
+import NotesService from '../db/notesService';
+import TagsService from '../db/tagsService';
+import { populateDB } from '../util/populateDB';
+import ConfirmableButton from './ConfirmableButton';
 
 export default function Settings() {
     const [notes, setnotes] = useState(0);
@@ -43,8 +45,14 @@ export default function Settings() {
                     <Heading size="lg">Manage Data:</Heading>
 
                     <Box>
-                        <p>Notes: {notes}</p>
-                        <p>Tags: {tags}</p>
+                        <p>
+                            Notes:
+                            {notes}
+                        </p>
+                        <p>
+                            Tags:
+                            {tags}
+                        </p>
                     </Box>
 
                     <ExportButton />
@@ -56,7 +64,7 @@ export default function Settings() {
     );
 }
 
-const DeleteButton = ({ updateCounts, buttonText = "Delete All Data" }) => {
+function DeleteButton({ updateCounts, buttonText = 'Delete All Data' }) {
     const toast = useToast();
     const deleteAllData = async () => {
         await TagsService.deleteAll();
@@ -65,37 +73,39 @@ const DeleteButton = ({ updateCounts, buttonText = "Delete All Data" }) => {
         updateCounts();
 
         toast({
-            title: "Data Deleted",
-            description: "All notes and tags have been deleted",
-            status: "success",
+            title: 'Data Deleted',
+            description: 'All notes and tags have been deleted',
+            status: 'success',
             duration: 9000,
-            isClosable: true,
+            isClosable: true
         });
     };
 
     return (
         <ConfirmableButton
             title={buttonText}
-            body="Are you sure you want to delete all application data? This can not be undone, you may want to export your data first"
+            body="Are you sure you want to delete all application data? This can not be undone,\
+             you may want to export your data first"
             button={{
                 icon: <DeleteIcon />,
                 label: buttonText,
-                color: "red",
+                color: 'red'
             }}
             onConfirm={() => deleteAllData()}
         />
     );
-};
+}
 
-const ExportButton = () => {
+function ExportButton() {
     const doExport = async () => {
         const notes = await NotesService.getAll();
         const tags = await TagsService.getAll();
 
-        const timestamp = new Date().toISOString().replaceAll("T", "_").replaceAll(":", "-").slice(0, -8);
+        const timestamp = new Date().toISOString().replaceAll('T', '_').replaceAll(':', '-')
+            .slice(0, -8);
 
-        download(JSON.stringify({ notes, tags }, null, 2), `NotesAppExport_${timestamp}.json`, "text/json");
+        download(JSON.stringify({ notes, tags }, null, 2), `NotesAppExport_${timestamp}.json`, 'text/json');
     };
 
     return <Button onClick={() => doExport()}>Export Data</Button>;
-};
+}

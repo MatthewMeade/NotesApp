@@ -1,4 +1,4 @@
-import { DeleteIcon, EditIcon, ViewIcon } from "@chakra-ui/icons";
+import { DeleteIcon, EditIcon, ViewIcon } from '@chakra-ui/icons';
 import {
     Box,
     Button,
@@ -11,18 +11,18 @@ import {
     Text,
     useColorModeValue,
     useToast,
-    VStack,
-} from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
-import { Link } from "react-router-dom";
+    VStack
+} from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router';
+import { Link } from 'react-router-dom';
 
-import { NotesService } from "../db/notesService";
-import ConfirmableButton from "./ConfirmableButton";
-import MarkdownRenderer from "./MarkdownRenderer";
+import NotesService from '../db/notesService';
+import ConfirmableButton from './ConfirmableButton';
+import MarkdownRenderer from './MarkdownRenderer';
 
-export default function Note({ note: _note, controlType = "page" }) {
-    let { id } = useParams();
+export default function Note({ note: _note, controlType = 'page' }) {
+    const { id } = useParams();
     const navigate = useNavigate();
     const toast = useToast();
 
@@ -35,13 +35,13 @@ export default function Note({ note: _note, controlType = "page" }) {
 
         NotesService.getById(id).then((loadedNote) => {
             if (!loadedNote) {
-                return navigate("/"); // TODO: 404
+                return navigate('/'); // TODO: 404
             }
             setNote(loadedNote);
         });
-    }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [id]);
 
-    const isPage = controlType === "page";
+    const isPage = controlType === 'page';
 
     const date = new Date(note?.updatedDate);
     const dateStr = `${date.toDateString()} ${date.toLocaleTimeString()}`;
@@ -51,20 +51,20 @@ export default function Note({ note: _note, controlType = "page" }) {
     const onDelete = async () => {
         await NotesService.delete(id);
         toast({
-            title: "Note Deleted",
-            description: "Your note has been Deleted",
-            status: "success",
+            title: 'Note Deleted',
+            description: 'Your note has been Deleted',
+            status: 'success',
             duration: 9000,
-            isClosable: true,
+            isClosable: true
         });
-        navigate("/");
+        navigate('/');
     };
 
     const controls = (
         <HStack justifyContent="right" py={isPage ? 3 : 0}>
             <Link to={`/note/${note.id}/edit`}>
                 <Button leftIcon={<EditIcon />} size="md">
-                    Edit
+                Edit
                 </Button>
             </Link>
 
@@ -74,8 +74,8 @@ export default function Note({ note: _note, controlType = "page" }) {
                     body="Are you sure you want to delete this note?"
                     button={{
                         icon: <DeleteIcon />,
-                        label: "Delete",
-                        color: "red",
+                        label: 'Delete',
+                        color: 'red'
                     }}
                     onConfirm={onDelete}
                 />
@@ -84,7 +84,7 @@ export default function Note({ note: _note, controlType = "page" }) {
             {!isPage && (
                 <Link to={`/note/${note.id}`}>
                     <Button leftIcon={<ViewIcon />} bg="none">
-                        View Note
+                    View Note
                     </Button>
                 </Link>
             )}
@@ -92,45 +92,43 @@ export default function Note({ note: _note, controlType = "page" }) {
     );
 
     return (
-        <>
-            <Container maxW="container.xl">
-                {isPage && controls}
-                <Box w="100%" pt={2}>
-                    <VStack align="left" onClick={() => setOpen(!isOpen)} borderBottom="1px solid grey">
-                        <HStack alignItems={"center"} justifyContent="space-between">
-                            <Heading size="md" isTruncated={!isPage}>
-                                {note.title}
-                            </Heading>
+        <Container maxW="container.xl">
+            {isPage && controls}
+            <Box w="100%" pt={2}>
+                <VStack align="left" onClick={() => setOpen(!isOpen)} borderBottom="1px solid grey">
+                    <HStack alignItems="center" justifyContent="space-between">
+                        <Heading size="md" isTruncated={!isPage}>
+                            {note.title}
+                        </Heading>
 
-                            {!isPage && controls}
-                        </HStack>
+                        {!isPage && controls}
+                    </HStack>
 
-                        <Flex justify="space-between">
-                            <Flex wrap="wrap" gap={1} pb={2}>
-                                <p>Tags: </p>
-                                {note.tags.map((tag) => (
-                                    <Tag size="sm" key={tag.id}>
-                                        {tag.value}
-                                    </Tag>
-                                ))}
-                            </Flex>
-                            <Text as="i">{dateStr}</Text>
+                    <Flex justify="space-between">
+                        <Flex wrap="wrap" gap={1} pb={2}>
+                            <p>Tags: </p>
+                            {note.tags.map((tag) => (
+                                <Tag size="sm" key={tag.id}>
+                                    {tag.value}
+                                </Tag>
+                            ))}
                         </Flex>
-                    </VStack>
+                        <Text as="i">{dateStr}</Text>
+                    </Flex>
+                </VStack>
 
-                    <SlideFade in={isOpen || isPage} initialScale={0} unmountOnExit>
-                        <Box
-                            bg={useColorModeValue("gray.100", "gray.900")}
-                            m={"0 10px"}
-                            p={2}
-                            mt={1}
-                            minH={isPage ? 250 : 125}
-                        >
-                            <MarkdownRenderer text={note.text} />
-                        </Box>
-                    </SlideFade>
-                </Box>
-            </Container>
-        </>
+                <SlideFade in={isOpen || isPage} initialScale={0} unmountOnExit>
+                    <Box
+                        bg={useColorModeValue('gray.100', 'gray.900')}
+                        m="0 10px"
+                        p={2}
+                        mt={1}
+                        minH={isPage ? 250 : 125}
+                    >
+                        <MarkdownRenderer text={note.text} />
+                    </Box>
+                </SlideFade>
+            </Box>
+        </Container>
     );
 }

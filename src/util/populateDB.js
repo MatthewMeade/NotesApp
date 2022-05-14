@@ -1,7 +1,7 @@
 import { loremIpsum } from 'lorem-ipsum';
 
-import { NotesService } from '../db/notesService';
-import { TagsService } from '../db/tagsService';
+import NotesService from '../db/notesService';
+import TagsService from '../db/tagsService';
 
 const NUM_TAGS = 25;
 const NUM_NOTES = 100;
@@ -23,7 +23,7 @@ export const populateDB = async () => {
             text: loremIpsum({ paragraphLowerBound: 1, paragraphUpperBound: 10, units: 'paragraphs' }),
             tags: randomTags(),
             createdDate,
-            updatedDate,
+            updatedDate
         });
     }
 
@@ -35,10 +35,9 @@ const randomTags = () => {
 
     do {
         const id = Math.floor(Math.random() * NUM_TAGS);
-        if (ret.includes(id)) {
-            continue;
+        if (!ret.includes(id)) {
+            ret.push(id);
         }
-        ret.push(id);
     } while (Math.random() >= 1 / 3);
 
     return ret.map((id) => ({ id }));

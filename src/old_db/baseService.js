@@ -1,10 +1,11 @@
 import { idbCon } from './idbService';
+
 export class BaseService {
     static connection = idbCon;
 
     static count() {
         return this.connection.count({
-            from: this.tableName,
+            from: this.tableName
         });
     }
 
@@ -19,7 +20,7 @@ export class BaseService {
                 into: this.tableName,
                 values,
                 return: true,
-                upsert: true,
+                upsert: true
             })
         )[0];
     }
@@ -28,8 +29,8 @@ export class BaseService {
         return this.connection.remove({
             from: this.tableName,
             where: {
-                id: id,
-            },
+                id
+            }
         });
     }
 
@@ -38,8 +39,8 @@ export class BaseService {
             in: this.tableName,
             set: this.preproccesUpdate(value),
             where: {
-                id: value.id,
-            },
+                id: value.id
+            }
         });
     }
 
@@ -47,7 +48,7 @@ export class BaseService {
         return this.connection
             .select({
                 ...(this.baseQuery ?? {}),
-                from: this.tableName,
+                from: this.tableName
             })
             .then(this.processResults);
     }
@@ -58,8 +59,8 @@ export class BaseService {
                 ...(this.baseQuery ?? {}),
                 from: this.tableName,
                 where: {
-                    id: id,
-                },
+                    id
+                }
             })
         )[0];
     }
@@ -73,8 +74,8 @@ export class BaseService {
                 from: this.tableName,
                 ...(this.baseQuery ?? {}),
                 where: {
-                    ...query,
-                },
+                    ...query
+                }
             })
             .then(this.processResults);
     }

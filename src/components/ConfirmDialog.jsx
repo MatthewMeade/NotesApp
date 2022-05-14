@@ -5,9 +5,9 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogOverlay,
-    Button,
-} from "@chakra-ui/react";
-import React from "react";
+    Button
+} from '@chakra-ui/react';
+import React from 'react';
 
 export default function ConfirmDialog({
     isOpen,
@@ -15,7 +15,7 @@ export default function ConfirmDialog({
     onConfirm,
     title,
     body,
-    confirmButton: { label, icon, color } = { label: "Confirm" },
+    confirmButton: { label, icon, color } = { label: 'Confirm' }
 }) {
     const cancelRef = React.useRef();
 

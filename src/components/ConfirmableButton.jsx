@@ -1,8 +1,10 @@
-import { Button, useDisclosure } from "@chakra-ui/react";
-import React from "react";
-import ConfirmDialog from "./ConfirmDialog";
+import { Button, useDisclosure } from '@chakra-ui/react';
+import React from 'react';
+import ConfirmDialog from './ConfirmDialog';
 
-export default function ConfirmableButton({ title, body, button: { icon, label, color }, onConfirm, size = "md" }) {
+export default function ConfirmableButton({
+    title, body, button: { icon, label, color }, onConfirm, size = 'md'
+}) {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const _onConfirm = () => {

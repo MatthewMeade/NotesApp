@@ -1,12 +1,11 @@
-import { BaseService } from './BaseService';
-export class TagsService extends BaseService {
+import BaseService from './BaseService';
+
+export default class TagsService extends BaseService {
     static tableName = 'Tags';
 
-    static find ({ value }) {
-        return this.db.find({
-            selector: {
-                value: { $regex: new RegExp(value, 'i') }
-            }
+    static find({ value }) {
+        return super.find({
+            value: { $regex: value }
         });
     }
 }

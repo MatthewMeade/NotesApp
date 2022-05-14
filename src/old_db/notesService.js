@@ -1,5 +1,5 @@
-import { BaseService } from './baseService';
 import { v4 as uuid } from 'uuid';
+import { BaseService } from './baseService';
 
 export class NotesService extends BaseService {
     static tableName = 'Notes';
@@ -12,12 +12,14 @@ export class NotesService extends BaseService {
             on: 'Notes.tags=Tags.id',
             as: {
                 id: 'tagId',
-                value: 'tagValue',
-            },
-        },
+                value: 'tagValue'
+            }
+        }
     };
 
-    static find({ id, title, text, tags, date: { start, end } = {} }) {
+    static find({
+        id, title, text, tags, date: { start, end } = {}
+    }) {
         if (id) {
             return super.getById(id);
         }
@@ -26,19 +28,19 @@ export class NotesService extends BaseService {
 
         if (tags && tags.length > 0) {
             where.tags = {
-                in: tags,
+                in: tags
             };
         }
 
         if (title) {
             where.title = {
-                regex: new RegExp(title, 'i'),
+                regex: new RegExp(title, 'i')
             };
         }
 
         if (text) {
             where.text = {
-                regex: new RegExp(text, 'i'),
+                regex: new RegExp(text, 'i')
             };
         }
 
