@@ -4,7 +4,7 @@ import { FaMoon, FaSun } from 'react-icons/fa';
 
 export default function ColorModeSwitcher(props) {
     const { toggleColorMode } = useColorMode();
-    const text = useColorModeValue("light", "light");
+    const text = useColorModeValue('light', 'light');
     const SwitchIcon = useColorModeValue(FaSun, FaMoon);
 
     return (

@@ -1,21 +1,21 @@
-import React from "react";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import React from 'react';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 
-import NoteForm from "./components/NoteForm";
-import Note from "./components/Note";
-import NotesList from "./components/NotesList";
-import NavBar from "./components/NavBar";
-import Settings from "./components/Settings";
-import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom";
+import NoteForm from './components/NoteForm';
+import Note from './components/Note';
+import NotesList from './components/NotesList';
+import NavBar from './components/NavBar';
+import Settings from './components/Settings';
+import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 
 const theme = extendTheme({
     config: {
-        initialColorMode: "dark",
+        initialColorMode: 'dark',
         useSystemColorMode: false,
     },
     fonts: {
-        heading: "Courier New, sans-serif",
-        body: "Courier New, sans-serif",
+        heading: 'Courier New, sans-serif',
+        body: 'Courier New, sans-serif',
     },
 });
 

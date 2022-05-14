@@ -1,97 +1,54 @@
-import { BaseService } from "./baseService";
-import { v4 as uuid } from "uuid";
+import { BaseService } from './BaseService';
 
 export class NotesService extends BaseService {
-    static tableName = "Notes";
+    static tableName = 'Notes';
 
-    static baseQuery = {
-        from: "Notes",
-        flatten: ["tags"],
-        join: {
-            with: "Tags",
-            on: "Notes.tags=Tags.id",
-            as: {
-                id: "tagId",
-                value: "tagValue",
-            },
-        },
-    };
+    static find ({ id, title, text, tags, date: { start, end } = {} } = {}) {
+        const selector = {};
 
-    static find({ id, title, text, tags, date: { start, end } = {} }) {
         if (id) {
-            return super.getById(id);
-        }
-
-        const where = {};
-
-        if (tags && tags.length > 0) {
-            where.tags = {
-                in: tags,
-            };
+            selector._id = id;
         }
 
         if (title) {
-            where.title = {
-                regex: new RegExp(title, "i"),
-            };
+            selector.title = { $regex: new RegExp(title, 'i') };
         }
 
         if (text) {
-            where.text = {
-                regex: new RegExp(text, "i"),
-            };
+            selector.text = { $regex: new RegExp(text, 'i') };
         }
 
         if (start || end) {
-            where.updatedDate = {};
+            selector.updatedDate = {};
 
             if (start) {
-                where.updatedDate[">="] = start;
+                selector.updatedDate.$gte = start;
             }
-
             if (end) {
-                where.updatedDate["<="] = end;
+                selector.updatedDate.$lte = end;
             }
         }
 
-        return super.find(where);
+        if (tags) {
+            selector.tags = { $in: tags };
+        }
+
+        return super.find(selector);
     }
 
-    static preproccesUpdate(note) {
+    static preproccesUpdate (note) {
         note = { ...note };
 
-        if (!note.id) {
-            note.id = uuid();
-        }
+        note.tags = note.tags.map(tag => tag.id);
 
-        if (!note.createdDate) {
-            note.createdDate = Date.now();
-        }
-
-        note.updatedDate = note.updatedDate ?? Date.now(); // Support custom updatedDate for testing
-
-        note.tags = note.tags?.map(({ id }) => id);
-
-        return note;
+        return super.preproccesUpdate(note);
     }
 
-    static processResults(rows) {
-        const reduced = rows.reduce((acc, cur) => {
-            if (!acc[cur.id]) {
-                acc[cur.id] = { ...cur, tags: [] };
-                delete acc[cur.id].tagId;
-                delete acc[cur.id].tagValue;
-            }
-
-            acc[cur.id].tags.push({ id: cur.tagId, value: cur.tagValue });
-
-            return acc;
-        }, {});
-
-        return Object.values(reduced);
+    static processResults (rows) {
+        return rows.map(note => ({ ...note, tags: note.tags.map(tag => ({ ...tag, value: 'temp' })) }));
     }
 }
 
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === 'development') {
     window.NotesService = NotesService;
 }

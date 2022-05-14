@@ -1,16 +1,14 @@
-import React, { StrictMode } from "react";
-import ReactDOM from "react-dom";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
-import * as serviceWorker from "./serviceWorker";
-import { initJsStore } from "./db/idbService";
+import React, { StrictMode } from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+import * as serviceWorker from './serviceWorker';
 
-initJsStore();
 ReactDOM.render(
     <StrictMode>
         <App />
     </StrictMode>,
-    document.getElementById("root")
+    document.getElementById('root')
 );
 
 // If you want your app to work offline and load faster, you can change

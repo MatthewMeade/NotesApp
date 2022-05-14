@@ -1,16 +1,16 @@
-import { BaseService } from "./baseService";
+import { BaseService } from './BaseService';
 export class TagsService extends BaseService {
-    static tableName = "Tags";
+    static tableName = 'Tags';
 
-    static find({ value }) {
-        return super.find({
-            value: {
-                regex: new RegExp(value, "i"),
-            },
+    static find ({ value }) {
+        return this.db.find({
+            selector: {
+                value: { $regex: new RegExp(value, 'i') }
+            }
         });
     }
 }
 
-if (process.env.NODE_ENV === "development") {
-    window.TagsService = new TagsService();
+if (process.env.NODE_ENV === 'development') {
+    window.TagsService = TagsService;
 }

@@ -1,66 +1,66 @@
 /* eslint-disable import/no-webpack-loader-syntax */
-import { DATA_TYPE, Connection } from "jsstore";
+import { DATA_TYPE, Connection } from 'jsstore';
 
 const getWorkerPath = () => {
-    if (process.env.NODE_ENV === "development") {
-        return require("file-loader?name=scripts/[name].[hash].js!jsstore/dist/jsstore.worker.js");
+    if (process.env.NODE_ENV === 'development') {
+        return require('file-loader?name=scripts/[name].[hash].js!jsstore/dist/jsstore.worker.js');
     } else {
-        return require("file-loader?name=scripts/[name].[hash].js!jsstore/dist/jsstore.worker.min.js");
+        return require('file-loader?name=scripts/[name].[hash].js!jsstore/dist/jsstore.worker.min.js');
     }
 };
 
 const workerPath = getWorkerPath().default;
 export const idbCon = new Connection(new Worker(workerPath));
-export const dbname = "NotesApp";
+export const dbname = 'NotesApp';
 
 const getDatabase = () => {
     const tblStudent = {
-        name: "Notes",
+        name: 'Notes',
         columns: {
             id: {
                 primaryKey: true,
-                dataType: DATA_TYPE.String,
+                dataType: DATA_TYPE.String
             },
             title: {
                 notNull: true,
-                dataType: DATA_TYPE.String,
+                dataType: DATA_TYPE.String
             },
             text: {
                 dataType: DATA_TYPE.String,
-                notNull: true,
+                notNull: true
             },
             createdDate: {
                 notNull: true,
-                dataType: DATA_TYPE.Number,
+                dataType: DATA_TYPE.Number
             },
             updatedDate: {
                 dataType: DATA_TYPE.Number,
-                notNull: true,
+                notNull: true
             },
             tags: {
                 dataType: DATA_TYPE.Array,
-                multiEntry: true,
-            },
-        },
+                multiEntry: true
+            }
+        }
     };
 
     const tblTags = {
-        name: "Tags",
+        name: 'Tags',
         columns: {
             id: {
                 primaryKey: true,
-                autoIncrement: true,
+                autoIncrement: true
             },
             value: {
                 notNull: true,
-                dataType: DATA_TYPE.String,
-            },
-        },
+                dataType: DATA_TYPE.String
+            }
+        }
     };
 
     const dataBase = {
         name: dbname,
-        tables: [tblStudent, tblTags],
+        tables: [tblStudent, tblTags]
     };
     return dataBase;
 };

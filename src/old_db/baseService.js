@@ -1,4 +1,4 @@
-import { idbCon } from "./idbService";
+import { idbCon } from './idbService';
 export class BaseService {
     static connection = idbCon;
 
