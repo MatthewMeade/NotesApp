@@ -4,10 +4,7 @@ module.exports = {
         es2021: true,
         node: true
     },
-    extends: [
-        'airbnb',
-        'plugin:react/recommended'
-    ],
+    extends: ['airbnb', 'plugin:react/recommended'],
     parserOptions: {
         ecmaFeatures: {
             jsx: true
@@ -15,9 +12,7 @@ module.exports = {
         ecmaVersion: 'latest',
         sourceType: 'module'
     },
-    plugins: [
-        'react'
-    ],
+    plugins: ['react'],
     rules: {
         'react/jsx-indent': 0,
         indent: ['error', 4],
@@ -32,8 +27,9 @@ module.exports = {
         'no-use-before-define': ['error', { functions: false, classes: false, variables: false }],
         'react/prop-types': 0,
         'react/jsx-indent-props': 0,
-        'consistent-return': 0
-
+        'consistent-return': 0,
+        'object-curly-newline': 0,
+        'no-restricted-syntax': 0
     },
 
     settings: {

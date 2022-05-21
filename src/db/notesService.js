@@ -4,9 +4,11 @@ import TagsService from './tagsService';
 export default class NotesService extends BaseService {
     static tableName = 'Notes';
 
-    static find({
-        id, title, text, tags, date: { start, end } = {}
-    } = {}) {
+    static indexes = ['title', 'text', 'updatedDate'];
+
+    static find(_selector = {}, paging = {}) {
+        const { id, title, text, tags, date: { start, end } = {} } = _selector;
+
         const selector = {};
 
         if (id) {
@@ -40,13 +42,14 @@ export default class NotesService extends BaseService {
             selector.tags = { $in: tags };
         }
 
-        return super.find(selector);
+        return super.find(selector, paging);
     }
 
     static preproccesUpdate(note) {
         const _note = { ...note };
 
         _note.tags = _note.tags.map((tag) => tag._id);
+        _note.updatedDate = Date.now();
 
         return super.preproccesUpdate(_note);
     }
@@ -55,15 +58,15 @@ export default class NotesService extends BaseService {
         const allTagIDs = [...new Set(rows.map((r) => r.tags).flat())];
         const allTags = (await TagsService.getById(allTagIDs)).reduce((acc, cur) => ({ ...acc, [cur._id]: cur }), {});
 
-        return rows.map((note) => (
-            {
-                ...note,
-                tags: note.tags.map((tag) => allTags[tag])
-            }
-        ));
+        return rows.map((note) => ({
+            ...note,
+            tags: note.tags.map((tag) => allTags[tag])
+        }));
     }
 }
 
 if (process.env.NODE_ENV === 'development') {
     window.NotesService = NotesService;
 }
+
+NotesService.init();

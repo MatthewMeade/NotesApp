@@ -6,6 +6,25 @@ export default class BaseService {
 
     static db = db;
 
+    static indexes = [];
+
+    static initPromise;
+
+    static async init() {
+        const promises = [];
+        for (const index of this.indexes) {
+            promises.push(
+                this.db.createIndex({
+                    index: {
+                        fields: [index]
+                    }
+                })
+            );
+        }
+
+        this.initPromise = Promise.all(promises);
+    }
+
     static async count() {
         const result = await this.getAll();
         return result.length;
@@ -42,13 +61,33 @@ export default class BaseService {
         return (await this.processResults([result]))[0];
     }
 
-    static async find(selector = {}) {
+    static async find(selector = {}, paging = {}) {
+        await this.initPromise;
+
         const _selector = { ...selector };
         _selector.docType = this.tableName;
         _selector.___deleted = { $ne: true };
 
+        const { skip, limit, sort: _sort } = paging;
+
+        let sort = _sort;
+        if (sort && !Array.isArray(sort)) {
+            sort = [sort];
+        }
+
+        if (sort) {
+            for (const key of sort) {
+                if (!_selector[key]) {
+                    _selector[key] = { $gt: 0 };
+                }
+            }
+        }
+
         const results = await this.db.find({
-            selector: _selector
+            selector: _selector,
+            skip,
+            limit,
+            sort
         });
 
         return this.processResults(results.docs);

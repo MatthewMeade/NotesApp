@@ -3,8 +3,13 @@ import BaseService from './BaseService';
 export default class TagsService extends BaseService {
     static tableName = 'Tags';
 
-    static find({ value, id } = {}) {
-        const selector = { };
+    static indexes = ['value'];
+
+    static find(_selector = {}, paging = {}) {
+        const { value, id } = _selector;
+
+        const selector = {};
+
         if (value) {
             selector.value = { $regex: value };
         }
@@ -17,10 +22,12 @@ export default class TagsService extends BaseService {
             }
         }
 
-        return super.find(selector);
+        return super.find(selector, paging);
     }
 }
 
 if (process.env.NODE_ENV === 'development') {
     window.TagsService = TagsService;
 }
+
+TagsService.init();

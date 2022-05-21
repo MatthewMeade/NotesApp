@@ -4,34 +4,65 @@ import {
 } from '@chakra-ui/react';
 
 import { AsyncSelect } from 'chakra-react-select';
-import Note from '../Note';
+import InfiniteScroll from 'react-infinite-scroller';
 
 import './styles.css';
 import NotesService from '../../db/notesService';
 import TagsService from '../../db/tagsService';
+import Note, { NoteSkeleton } from '../Note';
 
-// TODO: Paging
+const PAGE_SIZE = 25;
+
 export default function NotesList() {
-    const [tags, setTags] = useState([]);
-    const [title, setTitle] = useState('');
-    const [dateFrom, setDateFrom] = useState('');
-    const [dateTo, setDateTo] = useState('');
-
+    const [filter, setFilter] = useState({
+        title: '',
+        tags: [],
+        dateFrom: '',
+        dateTo: ''
+    });
     const [notes, setNotes] = useState([]);
+    const [resultCount, setResultCount] = useState(0);
+    const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
+    const find = (page) => {
         const date = {
-            start: dateFrom ? new Date(dateFrom) : undefined,
-            end: dateTo ? new Date(Date.parse(dateTo) + 86400000) : undefined // end of day
+            start: filter ? new Date(filter) : undefined,
+            end: filter.dateTo ? new Date(Date.parse(filter.dateTo) + 86400000) : undefined // end of day
         };
 
-        NotesService.find({ title, tags: tags.map((t) => t.id), date }).then(setNotes);
-    }, [tags, title, dateFrom, dateTo]);
+        return NotesService.find(
+            { title: filter.title, tags: filter?.tags?.map((t) => t.id), date },
+            page ? { skip: notes.length, limit: PAGE_SIZE, sort: 'updatedDate' } : {}
+        );
+    };
+
+    const loadMore = (clear) => {
+        find(true).then((newNotes) => {
+            setIsLoading(false);
+
+            if (clear) {
+                return setNotes(newNotes);
+            }
+            return setNotes([...notes, ...newNotes]);
+        });
+    };
+
+    const updateFilter = (key, value) => {
+        setResultCount(0);
+        setNotes([]);
+        setIsLoading(true);
+        setFilter({ ...filter, [key]: value });
+    };
+
+    useEffect(() => {
+        find(false).then((results) => {
+            setResultCount(results.length);
+            loadMore(true);
+        });
+    }, [filter]);
 
     return (
         <Container maxW="container.xl" bg="rgba(0,0,0,0.05)" pb={10} pt={5}>
-            {/* <Heading>My Notes:</Heading> */}
-
             <Grid templateColumns="min-content auto" gap={6} alignItems="center" mb={10}>
                 <GridItem>
                     <FormLabel htmlFor="title" pt="4px">
@@ -42,8 +73,8 @@ export default function NotesList() {
                     <Input
                         placeholder="Search by title..."
                         id="title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
+                        value={filter.title}
+                        onChange={(e) => updateFilter('title', e.target.value)}
                     />
                 </GridItem>
                 <GridItem>
@@ -55,16 +86,16 @@ export default function NotesList() {
                             id="dateFrom"
                             name="From"
                             type="date"
-                            value={dateFrom}
-                            onChange={(e) => setDateFrom(e.target.value)}
+                            value={filter.dateFrom}
+                            onChange={(e) => updateFilter('dateFrom', e.target.value)}
                             placeholder="Beginning Of Time"
                         />
                         <Input
                             id="dateTo"
                             name="To"
                             type="date"
-                            value={dateTo}
-                            onChange={(e) => setDateTo(e.target.value)}
+                            value={filter.dateTo}
+                            onChange={(e) => updateFilter('dateTo', e.target.value)}
                             placeholder="Today"
                         />
                     </HStack>
@@ -79,7 +110,7 @@ export default function NotesList() {
                         id="tags"
                         defaultOptions // Possibly remove this, requiring search to filter
                         isMulti
-                        value={tags.map((tag) => ({ value: tag._id, label: tag.value }))}
+                        value={filter?.tags?.map((tag) => ({ value: tag._id, label: tag.value }))}
                         name="tags"
                         placeholder="Search by tags..."
                         closeMenuOnSelect={false}
@@ -90,18 +121,31 @@ export default function NotesList() {
                             });
                         }}
                         onChange={(value) => {
-                            setTags(value.map((tag) => ({ value: tag.label, id: tag.value })));
+                            updateFilter('tags', value.map((tag) => ({ value: tag.label, id: tag.value })));
                         }}
                         noOptionsMessage={() => 'Type to find or add tags'}
                     />
                 </GridItem>
             </Grid>
 
-            <VStack gap={10}>
-                {notes.map((note) => (
-                    <Note note={note} key={note._id} controlType="list" />
-                ))}
-            </VStack>
+            {isLoading && notes.length === 0 ? <NoteSkeleton />
+                : (
+                    <InfiniteScroll
+                        pageStart={0}
+                        loadMore={() => loadMore()}
+                        hasMore={resultCount > notes.length}
+                        loader={(
+                            <NoteSkeleton key={0} />
+                        )}
+                        useWindow
+                    >
+                        <VStack gap={10}>
+                            {notes.map((note) => (
+                                <Note note={note} key={note._id} controlType="list" />
+                            ))}
+                        </VStack>
+                    </InfiniteScroll>
+                )}
         </Container>
     );
 }

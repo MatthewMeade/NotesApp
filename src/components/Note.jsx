@@ -6,12 +6,13 @@ import {
     Flex,
     Heading,
     HStack,
+    SkeletonText,
     SlideFade,
     Tag,
     Text,
     useColorModeValue,
     useToast,
-    VStack
+    VStack, Skeleton
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
@@ -128,6 +129,41 @@ export default function Note({ note: _note, controlType = 'page' }) {
                         <MarkdownRenderer text={note.text} />
                     </Box>
                 </SlideFade>
+            </Box>
+        </Container>
+    );
+}
+
+export function NoteSkeleton() {
+    return (
+        <Container maxW="container.xl">
+            <Box w="100%" pt={2}>
+                <VStack align="left" borderBottom="1px solid grey">
+                    <HStack alignItems="center" justifyContent="space-between">
+
+                        <Skeleton width="75%" height="40px" />
+
+                        <HStack justifyContent="right" py={3}>
+                            <Skeleton width="100px" height="40px" />
+                            <Skeleton width="100px" height="40px" />
+                        </HStack>
+                    </HStack>
+
+                    <Flex justify="space-between">
+                        <Flex wrap="wrap" gap={1} pb={2}>
+                            <Skeleton width="50px" height="24px" />
+                            <Skeleton width="75px" height="24px" />
+                            <Skeleton width="60px" height="24px" />
+                            <Skeleton width="50px" height="24px" />
+                        </Flex>
+
+                        <Box w="200px">
+                            <SkeletonText noOfLines={1} spacing="4" />
+                        </Box>
+                    </Flex>
+                </VStack>
+
+                <SkeletonText mt="4" noOfLines={4} spacing="4" />
             </Box>
         </Container>
     );
