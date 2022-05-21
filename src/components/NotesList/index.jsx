@@ -79,14 +79,14 @@ export default function NotesList() {
                         id="tags"
                         defaultOptions // Possibly remove this, requiring search to filter
                         isMulti
-                        value={tags.map((tag) => ({ value: tag.id, label: tag.value }))}
+                        value={tags.map((tag) => ({ value: tag._id, label: tag.value }))}
                         name="tags"
                         placeholder="Search by tags..."
                         closeMenuOnSelect={false}
                         size="md"
                         loadOptions={(value, callback) => {
                             TagsService.find({ value }).then((values) => {
-                                callback(values.map((tag) => ({ value: tag.id, label: tag.value })));
+                                callback(values.map((tag) => ({ value: tag._id, label: tag.value })));
                             });
                         }}
                         onChange={(value) => {
@@ -99,7 +99,7 @@ export default function NotesList() {
 
             <VStack gap={10}>
                 {notes.map((note) => (
-                    <Note note={note} key={note.id} controlType="list" />
+                    <Note note={note} key={note._id} controlType="list" />
                 ))}
             </VStack>
         </Container>

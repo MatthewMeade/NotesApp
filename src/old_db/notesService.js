@@ -62,8 +62,8 @@ export class NotesService extends BaseService {
     static preproccesUpdate(note) {
         note = { ...note };
 
-        if (!note.id) {
-            note.id = uuid();
+        if (!note._id) {
+            note._id = uuid();
         }
 
         if (!note.createdDate) {

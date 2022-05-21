@@ -1,4 +1,5 @@
 import BaseService from './BaseService';
+import TagsService from './tagsService';
 
 export default class NotesService extends BaseService {
     static tableName = 'Notes';
@@ -9,7 +10,11 @@ export default class NotesService extends BaseService {
         const selector = {};
 
         if (id) {
-            selector._id = id;
+            if (Array.isArray(id)) {
+                selector._id = { $in: id };
+            } else {
+                selector._id = id;
+            }
         }
 
         if (title) {
@@ -31,7 +36,7 @@ export default class NotesService extends BaseService {
             }
         }
 
-        if (tags) {
+        if (tags && tags.length > 0) {
             selector.tags = { $in: tags };
         }
 
@@ -41,13 +46,21 @@ export default class NotesService extends BaseService {
     static preproccesUpdate(note) {
         const _note = { ...note };
 
-        _note.tags = _note.tags.map((tag) => tag.id);
+        _note.tags = _note.tags.map((tag) => tag._id);
 
         return super.preproccesUpdate(_note);
     }
 
-    static processResults(rows) {
-        return rows.map((note) => ({ ...note, tags: note.tags.map((tag) => ({ ...tag, value: 'temp' })) }));
+    static async processResults(rows) {
+        const allTagIDs = [...new Set(rows.map((r) => r.tags).flat())];
+        const allTags = (await TagsService.getById(allTagIDs)).reduce((acc, cur) => ({ ...acc, [cur._id]: cur }), {});
+
+        return rows.map((note) => (
+            {
+                ...note,
+                tags: note.tags.map((tag) => allTags[tag])
+            }
+        ));
     }
 }
 

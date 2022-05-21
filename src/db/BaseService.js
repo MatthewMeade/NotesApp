@@ -6,13 +6,18 @@ export default class BaseService {
 
     static db = db;
 
-    static count() {
-
+    static async count() {
+        const result = await this.getAll();
+        return result.length;
     }
 
     static async add(value) {
+        if (Array.isArray(value)) {
+            const values = value.map((v) => this.preproccesUpdate(v));
+            return this.db.bulkDocs(values);
+        }
         const _value = this.preproccesUpdate(value);
-        return (await this.db.put(this.tableName, _value)).id;
+        return (await this.db.put(_value)).id;
     }
 
     static delete(id) {
@@ -28,6 +33,11 @@ export default class BaseService {
     }
 
     static async getById(id) {
+        if (Array.isArray(id)) {
+            const results = await this.db.allDocs({ keys: id, include_docs: true });
+            return this.processResults(results.rows.map((row) => row.doc));
+        }
+
         const result = await this.db.get(id);
         return (await this.processResults([result]))[0];
     }
@@ -35,7 +45,7 @@ export default class BaseService {
     static async find(selector = {}) {
         const _selector = { ...selector };
         _selector.docType = this.tableName;
-        _selector.___deleted = false;
+        _selector.___deleted = { $ne: true };
 
         const results = await this.db.find({
             selector: _selector

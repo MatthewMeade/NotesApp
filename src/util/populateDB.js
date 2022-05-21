@@ -9,7 +9,7 @@ const NUM_NOTES = 100;
 export const populateDB = async () => {
     const tags = loremIpsum({ count: NUM_TAGS, units: 'words' })
         .split(' ')
-        .map((t) => ({ value: t }));
+        .map((t, i) => ({ value: t, _id: i.toString() }));
 
     await TagsService.add(tags);
 
@@ -40,5 +40,5 @@ const randomTags = () => {
         }
     } while (Math.random() >= 1 / 3);
 
-    return ret.map((id) => ({ id }));
+    return ret.map((id) => ({ _id: `${id}` }));
 };

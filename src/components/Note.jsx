@@ -62,7 +62,7 @@ export default function Note({ note: _note, controlType = 'page' }) {
 
     const controls = (
         <HStack justifyContent="right" py={isPage ? 3 : 0}>
-            <Link to={`/note/${note.id}/edit`}>
+            <Link to={`/note/${note._id}/edit`}>
                 <Button leftIcon={<EditIcon />} size="md">
                 Edit
                 </Button>
@@ -82,7 +82,7 @@ export default function Note({ note: _note, controlType = 'page' }) {
             )}
 
             {!isPage && (
-                <Link to={`/note/${note.id}`}>
+                <Link to={`/note/${note._id}`}>
                     <Button leftIcon={<ViewIcon />} bg="none">
                     View Note
                     </Button>
@@ -97,7 +97,7 @@ export default function Note({ note: _note, controlType = 'page' }) {
             <Box w="100%" pt={2}>
                 <VStack align="left" onClick={() => setOpen(!isOpen)} borderBottom="1px solid grey">
                     <HStack alignItems="center" justifyContent="space-between">
-                        <Heading size="md" isTruncated={!isPage}>
+                        <Heading size="md">
                             {note.title}
                         </Heading>
 
@@ -108,7 +108,7 @@ export default function Note({ note: _note, controlType = 'page' }) {
                         <Flex wrap="wrap" gap={1} pb={2}>
                             <p>Tags: </p>
                             {note.tags.map((tag) => (
-                                <Tag size="sm" key={tag.id}>
+                                <Tag size="sm" key={tag._id}>
                                     {tag.value}
                                 </Tag>
                             ))}
@@ -117,7 +117,7 @@ export default function Note({ note: _note, controlType = 'page' }) {
                     </Flex>
                 </VStack>
 
-                <SlideFade in={isOpen || isPage} initialScale={0} unmountOnExit>
+                <SlideFade in={isOpen || isPage} unmountOnExit>
                     <Box
                         bg={useColorModeValue('gray.100', 'gray.900')}
                         m="0 10px"
