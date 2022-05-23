@@ -143,7 +143,7 @@ export default function NoteForm() {
 
             <FormControl mb="2em" isInvalid={doValidation.text && textError}>
                 <FormLabel htmlFor="email">Note Body:</FormLabel>
-                <SimpleMDE value={note.text} onChange={(value) => updateNote('title', value)} options={options} />
+                <SimpleMDE value={note.text} onChange={(value) => updateNote('text', value)} options={options} />
                 <FormErrorMessage>Note body cannot be blank</FormErrorMessage>
             </FormControl>
 
