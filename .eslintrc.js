@@ -29,7 +29,8 @@ module.exports = {
         'react/jsx-indent-props': 0,
         'consistent-return': 0,
         'object-curly-newline': 0,
-        'no-restricted-syntax': 0
+        'no-restricted-syntax': 0,
+        'no-nested-ternary': 0
     },
 
     settings: {

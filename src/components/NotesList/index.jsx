@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Container, FormLabel, Grid, GridItem, VStack, Input, HStack
+    Container, FormLabel, Grid, GridItem, VStack, Input, HStack, Heading
 } from '@chakra-ui/react';
 
 import { AsyncSelect } from 'chakra-react-select';
@@ -128,8 +128,8 @@ export default function NotesList() {
                 </GridItem>
             </Grid>
 
-            {isLoading && notes.length === 0 ? <NoteSkeleton />
-                : (
+            {isLoading ? <NoteSkeleton /> : (
+                notes.length > 0 ? (
                     <InfiniteScroll
                         pageStart={0}
                         loadMore={() => loadMore()}
@@ -145,7 +145,9 @@ export default function NotesList() {
                             ))}
                         </VStack>
                     </InfiniteScroll>
-                )}
+                ) : (<Heading textAlign="center">No Notes Found</Heading>)
+            )}
+
         </Container>
     );
 }
