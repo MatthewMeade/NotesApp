@@ -7,6 +7,7 @@ import { AsyncSelect } from 'chakra-react-select';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import './styles.css';
+import { useDebouncedCallback } from 'use-debounce';
 import NotesService from '../../db/notesService';
 import TagsService from '../../db/tagsService';
 import Note, { NoteSkeleton } from '../Note';
@@ -20,6 +21,7 @@ export default function NotesList() {
         dateFrom: '',
         dateTo: ''
     });
+
     const [notes, setNotes] = useState([]);
     const [resultCount, setResultCount] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
@@ -47,18 +49,23 @@ export default function NotesList() {
         });
     };
 
-    const updateFilter = (key, value) => {
+    const onFilterUpdate = useDebouncedCallback(() => {
+        console.log('Updating Filter');
         setResultCount(0);
         setNotes([]);
         setIsLoading(true);
-        setFilter({ ...filter, [key]: value });
-    };
-
-    useEffect(() => {
         find(false).then((results) => {
             setResultCount(results.length);
             loadMore(true);
         });
+    }, 200);
+
+    const updateFilter = (key, value) => {
+        setFilter({ ...filter, [key]: value });
+    };
+
+    useEffect(() => {
+        onFilterUpdate();
     }, [filter]);
 
     return (
