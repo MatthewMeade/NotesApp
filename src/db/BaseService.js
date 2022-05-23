@@ -66,7 +66,7 @@ export default class BaseService {
 
         const _selector = { ...selector };
         _selector.docType = this.tableName;
-        _selector.___deleted = { $ne: true };
+        _selector._deleted = { $ne: true };
 
         const { skip, limit, sort: _sort } = paging;
 
@@ -95,7 +95,7 @@ export default class BaseService {
 
     static async deleteAll() {
         const docs = await this.find({});
-        this.db.bulkDocs(docs.map((d) => ({ ...d, ___deleted: true })));
+        this.db.bulkDocs(docs.map((d) => ({ ...d, _deleted: true })));
     }
 
     static preproccesUpdate(obj) {

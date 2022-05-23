@@ -56,6 +56,7 @@ export default class NotesService extends BaseService {
 
     static async processResults(rows) {
         const allTagIDs = [...new Set(rows.map((r) => r.tags).flat())];
+
         const allTags = (await TagsService.getById(allTagIDs)).reduce((acc, cur) => ({ ...acc, [cur._id]: cur }), {});
 
         return rows.map((note) => ({
