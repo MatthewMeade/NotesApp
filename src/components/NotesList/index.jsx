@@ -50,7 +50,6 @@ export default function NotesList() {
     };
 
     const onFilterUpdate = useDebouncedCallback(() => {
-        console.log('Updating Filter');
         setResultCount(0);
         setNotes([]);
         setIsLoading(true);
