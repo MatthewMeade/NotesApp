@@ -6,7 +6,7 @@ export default class NotesService extends BaseService {
 
     static indexes = ['title', 'text', 'updatedDate'];
 
-    static find(_selector = {}, paging = {}) {
+    static find(_selector = {}, paging = {}, options = {}) {
         const { id, title, text, tags, date: { start, end } = {} } = _selector;
 
         const selector = {};
@@ -42,7 +42,7 @@ export default class NotesService extends BaseService {
             selector.tags = { $in: tags };
         }
 
-        return super.find(selector, paging);
+        return super.find(selector, paging, options);
     }
 
     static preproccesUpdate(note) {

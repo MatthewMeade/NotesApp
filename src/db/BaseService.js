@@ -27,7 +27,7 @@ export default class BaseService {
 
     static async count() {
         const result = await this.getAll();
-        return result.length;
+        return result?.length ?? 0;
     }
 
     static async add(value) {
@@ -61,7 +61,7 @@ export default class BaseService {
         return (await this.processResults([result]))[0];
     }
 
-    static async find(selector = {}, paging = {}) {
+    static async find(selector = {}, paging = {}, options = {}) {
         await this.initPromise;
 
         const _selector = { ...selector };
@@ -90,11 +90,19 @@ export default class BaseService {
             sort
         });
 
-        return this.processResults(results.docs);
+        if (options.processResults ?? true) {
+            return this.processResults(results.docs);
+        }
+        return results.docs;
     }
 
     static async deleteAll() {
-        const docs = await this.find({});
+        const docs = await this.find({}, {}, { processResults: false });
+
+        if (!docs?.length) {
+            return;
+        }
+
         this.db.bulkDocs(docs.map((d) => ({ ...d, _deleted: true })));
     }
 

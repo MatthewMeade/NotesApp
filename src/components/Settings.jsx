@@ -5,6 +5,7 @@ import {
 import download from 'downloadjs';
 import React, { useEffect, useState } from 'react';
 import ColorModeSwitcher from '../ColorModeSwitcher';
+import db from '../db/db';
 import NotesService from '../db/notesService';
 import TagsService from '../db/tagsService';
 import { populateDB } from '../util/populateDB';
@@ -84,7 +85,7 @@ function DeleteButton({ updateCounts, buttonText = 'Delete All Data' }) {
     return (
         <ConfirmableButton
             title={buttonText}
-            body="Are you sure you want to delete all application data? This can not be undone,\
+            body="Are you sure you want to delete all application data? This can not be undone,
              you may want to export your data first"
             button={{
                 icon: <DeleteIcon />,
@@ -98,13 +99,16 @@ function DeleteButton({ updateCounts, buttonText = 'Delete All Data' }) {
 
 function ExportButton() {
     const doExport = async () => {
-        const notes = await NotesService.getAll();
-        const tags = await TagsService.getAll();
+        // const notes = await NotesService.getAll();
+        // const tags = await TagsService.getAll();
+
+        const data = await db.allDocs({ include_docs: true, attachments: true })
+            .then((d) => JSON.stringify(d, null, 2));
 
         const timestamp = new Date().toISOString().replaceAll('T', '_').replaceAll(':', '-')
             .slice(0, -8);
 
-        download(JSON.stringify({ notes, tags }, null, 2), `NotesAppExport_${timestamp}.json`, 'text/json');
+        download(data, `NotesAppExport_${timestamp}.json`, 'text/json');
     };
 
     return <Button onClick={() => doExport()}>Export Data</Button>;
