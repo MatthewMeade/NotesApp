@@ -7,7 +7,7 @@ const NUM_TAGS = 25;
 const NUM_NOTES = 100;
 
 export const populateDB = async () => {
-    const tags = loremIpsum({ count: NUM_TAGS, units: 'words' })
+    const tags = loremIpsum({ count: window.NUM_TAGS ?? NUM_TAGS, units: 'words' })
         .split(' ')
         .map((t, i) => ({ value: t, _id: i.toString() }));
 
@@ -15,7 +15,7 @@ export const populateDB = async () => {
 
     const notes = [];
 
-    for (let i = 0; i < NUM_NOTES; i++) {
+    for (let i = 0; i < window.NUM_NOTES ?? NUM_NOTES; i++) {
         const createdDate = Math.floor(Math.min(Date.now(), new Date().setDate(Math.random() * 30)));
         const updatedDate = Math.floor(Math.min(Date.now(), createdDate + 86400000 * 7 * Math.random()));
         notes.push({
