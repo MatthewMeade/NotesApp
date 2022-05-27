@@ -28,7 +28,7 @@ export default function NotesList() {
 
     const find = (page) => {
         const date = {
-            start: filter ? new Date(filter) : undefined,
+            start: filter.dateFrom ? new Date(filter) : undefined,
             end: filter.dateTo ? new Date(Date.parse(filter.dateTo) + 86400000) : undefined // end of day
         };
 

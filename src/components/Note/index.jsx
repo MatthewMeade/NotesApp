@@ -18,9 +18,11 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 
-import NotesService from '../db/notesService';
-import ConfirmableButton from './ConfirmableButton';
-import MarkdownRenderer from './MarkdownRenderer';
+import NotesService from '../../db/notesService';
+import ConfirmableButton from '../ConfirmableButton';
+import MarkdownRenderer from '../MarkdownRenderer';
+
+import './styles.css';
 
 export default function Note({ note: _note, controlType = 'page' }) {
     const { id } = useParams();
@@ -95,8 +97,13 @@ export default function Note({ note: _note, controlType = 'page' }) {
     return (
         <Container maxW="container.xl">
             {isPage && controls}
-            <Box w="100%" pt={2}>
-                <VStack align="left" onClick={() => setOpen(!isOpen)} borderBottom="1px solid grey">
+            <Box w="100%" pt={2} className="note">
+                <VStack
+                    align="left"
+                    onClick={() => setOpen(!isOpen)}
+                    borderBottom="1px solid grey"
+                    className={`noteHeader ${isOpen ? 'note_open' : 'note_closed'}`}
+                >
                     <HStack alignItems="center" justifyContent="space-between">
                         <Heading size="md">
                             {note.title}

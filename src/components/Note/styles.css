@@ -1,0 +1,21 @@
+.note {
+    position: relative;
+}
+
+.noteHeader::after {
+    opacity: 0;
+    transition: none;
+    /* transition: opacity 2s; */
+    content: "▼";
+    margin: 0 auto;
+    position: absolute;
+    top: 100%;
+    text-align: center;
+    width: 100%;
+
+}
+
+.noteHeader.note_closed::after {
+    opacity: 1;
+    transition: opacity 02s
+}

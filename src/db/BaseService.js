@@ -57,8 +57,14 @@ export default class BaseService {
             return this.processResults(results.rows.map((row) => row.doc));
         }
 
-        const result = await this.db.get(id);
-        return (await this.processResults([result]))[0];
+        try {
+            const result = await this.db.get(id);
+            return (await this.processResults([result]))[0];
+        } catch (error) {
+            if (error.name === 'not_found') {
+                return null;
+            }
+        }
     }
 
     static async find(selector = {}, paging = {}, options = {}) {

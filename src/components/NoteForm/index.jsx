@@ -38,12 +38,16 @@ export default function NoteForm() {
     // Load note when editing
     useEffect(() => {
         if (!id) {
-            setNote({ text: '', title: '', tags: {} });
+            setNote({ text: '', title: '', tags: [] });
             setDoValidation({ text: false, tags: false, title: false });
             return;
         }
 
         NotesService.getById(id).then((loadedNote) => {
+            if (!loadedNote) {
+                return navigate('/add');
+            }
+
             setNote(loadedNote);
             setDoValidation({ text: true, tags: true, title: true });
         });
