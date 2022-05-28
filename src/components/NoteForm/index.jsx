@@ -1,3 +1,8 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-loop-func */
+/* eslint-disable no-alert */
+import { v4 as uuid } from 'uuid';
+
 import React, { useEffect, useMemo, useState } from 'react';
 
 import {
@@ -19,14 +24,78 @@ import 'easymde/dist/easymde.min.css';
 import './MDEditorStyles.css';
 import NotesService from '../../db/notesService';
 import TagsService from '../../db/tagsService';
+import ImageList from './ImageList';
 
 export default function NoteForm() {
     const { id } = useParams();
 
     const [note, setNote] = useState({ text: '', title: '', tags: [] });
+    const [attachments, setAttachments] = useState([]);
 
     const updateNote = (key, value) => {
         setNote({ ...note, [key]: value });
+    };
+
+    const addImage = (data, success) => {
+        const _attachments = [...attachments];
+
+        let fileName = data.name;
+        while (_attachments.some((n) => n.name === fileName)) {
+            fileName = prompt(
+                `A file with the name ${fileName} already exists, would you like to name this file something else`,
+                fileName
+            );
+        }
+
+        if (fileName === null) {
+            return; // User cancelled
+        }
+
+        const file = {
+            id: uuid(),
+            name: fileName,
+            data
+        };
+
+        _attachments.push(file);
+
+        setAttachments(_attachments);
+        success(fileName);
+    };
+
+    const deleteImage = (fileName) => {
+        setAttachments(attachments.filter((n) => n.name !== fileName));
+
+        const noteText = note.text.replaceAll(`![](${fileName})`, '');
+        updateNote('text', noteText);
+    };
+
+    const updateImageTitle = (key, value) => {
+        const titleExists = attachments.some((n) => n.name === value);
+
+        if (titleExists) {
+            toast({
+                title: `An image named ${value} already exists`,
+                description: 'Rename or delete the other image',
+                status: 'error',
+                duration: 9000,
+                isClosable: true
+            });
+
+            return;
+        }
+
+        const _attachments = attachments.map((a) => {
+            if (a.name === key) {
+                a.name = value;
+            }
+            return a;
+        });
+
+        const noteText = note.text.replaceAll(`![](${key})`, `![](${value})`);
+        updateNote('text', noteText);
+
+        setAttachments(_attachments);
     };
 
     const [doValidation, setDoValidation] = useState({ text: false, tags: false, title: false });
@@ -39,6 +108,7 @@ export default function NoteForm() {
     useEffect(() => {
         if (!id) {
             setNote({ text: '', title: '', tags: [] });
+            setAttachments([]);
             setDoValidation({ text: false, tags: false, title: false });
             return;
         }
@@ -49,6 +119,7 @@ export default function NoteForm() {
             }
 
             setNote(loadedNote);
+            setAttachments(loadedNote.attachments ?? []);
             setDoValidation({ text: true, tags: true, title: true });
         });
     }, [id]);
@@ -78,6 +149,7 @@ export default function NoteForm() {
 
     const _addNote = async () => {
         const newNote = await NotesService.add(note);
+        newNote.attachments = attachments;
         toast({
             title: 'Note created',
             description: 'Your note has been saved',
@@ -89,7 +161,10 @@ export default function NoteForm() {
     };
 
     const _updateNote = async () => {
-        await NotesService.update(note);
+        const newNote = { ...note };
+        newNote.attachments = attachments;
+
+        await NotesService.update(newNote);
         toast({
             title: 'Note Updated',
             description: 'Your note has been saved',
@@ -100,32 +175,30 @@ export default function NoteForm() {
         navigate(`/note/${id}`);
     };
 
-    const options = useMemo(
-        () => ({
-            spellChecker: false,
-            placeholder: 'Write your note here...',
-            // TODO: Image Uploads
-            // uploadImage: true,
-            toolbar: [
-                'bold',
-                'italic',
-                'strikethrough',
-                'heading',
-                'code',
-                'quote',
-                'unordered-list',
-                'ordered-list',
-                'link',
-                'image',
-                'table',
-                '|',
-                'clean-block',
-                '|',
-                'guide'
-            ]
-        }),
-        []
-    );
+    const options = useMemo(() => ({
+        spellChecker: false,
+        placeholder: 'Write your note here...',
+        uploadImage: true,
+        toolbar: [
+            'bold',
+            'italic',
+            'strikethrough',
+            'heading',
+            'code',
+            'quote',
+            'unordered-list',
+            'ordered-list',
+            'link',
+            'image',
+            'table',
+            '|',
+            'clean-block',
+            '|',
+            'guide'
+        ],
+        imageUploadFunction: addImage
+
+    }), [attachments]);
 
     return (
         <Container maxW="container.xl">
@@ -147,7 +220,11 @@ export default function NoteForm() {
 
             <FormControl mb="2em" isInvalid={doValidation.text && textError}>
                 <FormLabel htmlFor="email">Note Body:</FormLabel>
-                <SimpleMDE value={note.text} onChange={(value) => updateNote('text', value)} options={options} />
+                <SimpleMDE
+                    value={note.text}
+                    onChange={(value) => updateNote('text', value)}
+                    options={options}
+                />
                 <FormErrorMessage>Note body cannot be blank</FormErrorMessage>
             </FormControl>
 
@@ -189,6 +266,8 @@ export default function NoteForm() {
                     </Button>
                 )}
             </Center>
+
+            <ImageList attachments={attachments ?? {}} deleteImage={deleteImage} updateImageTitle={updateImageTitle} />
         </Container>
     );
 }

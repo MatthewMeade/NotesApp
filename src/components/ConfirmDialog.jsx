@@ -5,6 +5,7 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogOverlay,
+    Box,
     Button
 } from '@chakra-ui/react';
 import React from 'react';
@@ -19,6 +20,11 @@ export default function ConfirmDialog({
 }) {
     const cancelRef = React.useRef();
 
+    let _body = body;
+    if (Array.isArray(body) && typeof body[0] === 'string') {
+        _body = body.map((s) => <Box key={s} mb={5}>{s}</Box>);
+    }
+
     return (
         <AlertDialog isOpen={isOpen} onClose={onClose} leastDestructiveRef={cancelRef}>
             <AlertDialogOverlay>
@@ -26,7 +32,7 @@ export default function ConfirmDialog({
                     <AlertDialogHeader fontSize="lg" fontWeight="bold">
                         {title}
                     </AlertDialogHeader>
-                    <AlertDialogBody>{body}</AlertDialogBody>
+                    <AlertDialogBody>{_body}</AlertDialogBody>
                     <AlertDialogFooter>
                         <Button onClick={onClose}>Cancel</Button>
                         <Button leftIcon={icon} colorScheme={color} onClick={onConfirm} ml={3}>

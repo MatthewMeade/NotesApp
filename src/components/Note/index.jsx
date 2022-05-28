@@ -29,7 +29,7 @@ export default function Note({ note: _note, controlType = 'page' }) {
     const navigate = useNavigate();
     const toast = useToast();
 
-    const [note, setNote] = useState(_note ?? { tags: [] });
+    const [note, setNote] = useState(_note ?? { tags: [], attachments: [] });
 
     useEffect(() => {
         if (!id) {
@@ -94,6 +94,8 @@ export default function Note({ note: _note, controlType = 'page' }) {
         </HStack>
     );
 
+    const imageMap = note?.attachments?.reduce((acc, cur) => ({ ...acc, [cur.name]: cur }), {});
+
     return (
         <Container maxW="container.xl">
             {isPage && controls}
@@ -133,7 +135,7 @@ export default function Note({ note: _note, controlType = 'page' }) {
                         mt={1}
                         minH={isPage ? 250 : 125}
                     >
-                        <MarkdownRenderer text={note.text} />
+                        <MarkdownRenderer text={note.text} imageMap={imageMap} />
                     </Box>
                 </SlideFade>
             </Box>

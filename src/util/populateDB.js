@@ -15,7 +15,8 @@ export const populateDB = async () => {
 
     const notes = [];
 
-    for (let i = 0; i < window.NUM_NOTES ?? NUM_NOTES; i++) {
+    const numNotes = window.NUM_NOTES ?? NUM_NOTES;
+    for (let i = 0; i < numNotes; i++) {
         const createdDate = Math.floor(Math.min(Date.now(), new Date().setDate(Math.random() * 30)));
         const updatedDate = Math.floor(Math.min(Date.now(), createdDate + 86400000 * 7 * Math.random()));
         notes.push({

@@ -83,8 +83,13 @@ export default class BaseService {
 
         if (sort) {
             for (const key of sort) {
-                if (!_selector[key]) {
-                    _selector[key] = { $gt: 0 };
+                let _key = key;
+                if (typeof key === 'object') {
+                    // eslint-disable-next-line prefer-destructuring
+                    _key = Object.keys(key)[0];
+                }
+                if (!_selector[_key]) {
+                    _selector[_key] = { $gt: 0 };
                 }
             }
         }
@@ -93,7 +98,8 @@ export default class BaseService {
             selector: _selector,
             skip,
             limit,
-            sort
+            sort,
+            attachments: true
         });
 
         if (options.processResults ?? true) {

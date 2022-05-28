@@ -30,4 +30,4 @@ if (process.env.NODE_ENV === 'development') {
     window.TagsService = TagsService;
 }
 
-TagsService.init();
+// TagsService.init();

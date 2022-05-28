@@ -34,7 +34,7 @@ export default function NotesList() {
 
         return NotesService.find(
             { title: filter.title, tags: filter?.tags?.map((t) => t.id), date },
-            page ? { skip: notes.length, limit: PAGE_SIZE, sort: 'updatedDate' } : {}
+            page ? { skip: notes.length, limit: PAGE_SIZE, sort: [{ updatedDate: 'desc' }] } : {}
         );
     };
 
