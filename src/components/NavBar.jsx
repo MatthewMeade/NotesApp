@@ -64,7 +64,13 @@ export default function NavBar() {
                     />
                 )}
                 <HStack spacing={8} alignItems="center">
-                    <Link to="/"><Heading fontSize="1.5em">Notes App</Heading></Link>
+                    <Link
+                        as={RouterLink}
+                        to="/"
+                    >
+                        <Heading fontSize="1.5em">Notes App</Heading>
+
+                    </Link>
                     <HStack as="nav" spacing={4} display={{ base: 'none', md: 'flex' }}>
                         <NavLink path="/">My Notes</NavLink>
                     </HStack>
