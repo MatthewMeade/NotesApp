@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { DeleteIcon } from '@chakra-ui/icons';
+import { DeleteIcon, RepeatIcon } from '@chakra-ui/icons';
 import {
     Button, Container, Heading, SimpleGrid, useToast, VStack
 } from '@chakra-ui/react';
@@ -51,15 +51,27 @@ export default function Settings() {
                     </SimpleGrid>
 
                     <ExportButton />
-                    <DeleteButton updateCounts={updateCounts} />
-                    <DeleteButton updateCounts={generateData} buttonText="Regenerate Data" />
+                    <DeleteButton
+                        updateCounts={updateCounts}
+                        confirmText="Are you sure you want to delete all application data? This can not be undone,
+             you may want to export your data first"
+                        buttonText="Delete All Data"
+                        icon={<DeleteIcon />}
+                    />
+                    <DeleteButton
+                        updateCounts={generateData}
+                        buttonText="Regenerate Data"
+                        confirmText="Are you sure you want to delete and regenerate all app data?
+                        This can not be undone, you may want to export your data first"
+                        icon={<RepeatIcon />}
+                    />
                 </VStack>
             </VStack>
         </Container>
     );
 }
 
-function DeleteButton({ updateCounts, buttonText = 'Delete All Data' }) {
+function DeleteButton({ updateCounts, buttonText, confirmText, icon }) {
     const toast = useToast();
     const deleteAllData = async () => {
         await TagsService.deleteAll();
@@ -79,10 +91,9 @@ function DeleteButton({ updateCounts, buttonText = 'Delete All Data' }) {
     return (
         <ConfirmableButton
             title={buttonText}
-            body="Are you sure you want to delete all application data? This can not be undone,
-             you may want to export your data first"
+            body={confirmText}
             button={{
-                icon: <DeleteIcon />,
+                icon,
                 label: buttonText,
                 color: 'red'
             }}
