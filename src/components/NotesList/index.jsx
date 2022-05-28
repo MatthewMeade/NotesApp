@@ -11,6 +11,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import NotesService from '../../db/notesService';
 import TagsService from '../../db/tagsService';
 import Note, { NoteSkeleton } from '../Note';
+import db from '../../db/db';
 
 const PAGE_SIZE = 25;
 
@@ -66,6 +67,15 @@ export default function NotesList() {
     useEffect(() => {
         onFilterUpdate();
     }, [filter]);
+
+    useEffect(() => {
+        db.changes({
+            since: 'now',
+            live: true
+        }).on('change', () => {
+            onFilterUpdate();
+        });
+    }, []);
 
     return (
         <Container maxW="container.xl" bg="rgba(0,0,0,0.05)" pb={10} pt={5}>

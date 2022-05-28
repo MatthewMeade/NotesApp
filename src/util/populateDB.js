@@ -6,7 +6,12 @@ import TagsService from '../db/tagsService';
 const NUM_TAGS = 25;
 const NUM_NOTES = 100;
 
-export const populateDB = async () => {
+export const populateDB = async (deleteExistingData) => {
+    if (deleteExistingData) {
+        await TagsService.deleteAll();
+        await NotesService.deleteAll();
+    }
+
     const tags = loremIpsum({ count: window.NUM_TAGS ?? NUM_TAGS, units: 'words' })
         .split(' ')
         .map((t, i) => ({ value: t, _id: i.toString() }));

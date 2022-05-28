@@ -16,7 +16,8 @@ export default function ConfirmDialog({
     onConfirm,
     title,
     body,
-    confirmButton: { label, icon, color } = { label: 'Confirm' }
+    confirmButton: { label, icon, color } = { label: 'Confirm' },
+    cancelButton: { label: clabel, icon: cicon, color: ccolor } = { label: 'Cancel' }
 }) {
     const cancelRef = React.useRef();
 
@@ -34,7 +35,10 @@ export default function ConfirmDialog({
                     </AlertDialogHeader>
                     <AlertDialogBody>{_body}</AlertDialogBody>
                     <AlertDialogFooter>
-                        <Button onClick={onClose}>Cancel</Button>
+                        <Button leftIcon={cicon} onClick={onClose} colorScheme={ccolor}>
+                            {clabel}
+                        </Button>
+
                         <Button leftIcon={icon} colorScheme={color} onClick={onConfirm} ml={3}>
                             {label}
                         </Button>
