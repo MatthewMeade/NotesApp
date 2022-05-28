@@ -1,10 +1,10 @@
+/* eslint-disable no-param-reassign */
 import { DeleteIcon } from '@chakra-ui/icons';
 import {
-    Box, Button, Container, Heading, HStack, useToast, VStack
+    Button, Container, Heading, SimpleGrid, useToast, VStack
 } from '@chakra-ui/react';
 import download from 'downloadjs';
 import React, { useEffect, useState } from 'react';
-import ColorModeSwitcher from '../ColorModeSwitcher';
 import db from '../db/db';
 import NotesService from '../db/notesService';
 import TagsService from '../db/tagsService';
@@ -31,21 +31,15 @@ export default function Settings() {
 
     return (
         <Container>
-            <Heading mb="1em" mt="5px">
-                Settings:
+            <Heading my="1em" textAlign="center" size="2xl">
+                Settings
             </Heading>
 
-            <VStack align="left" gap={10}>
-                <HStack>
-                    {/* TODO: Light mode styling needs work */}
-                    <p>Color mode</p>
-                    <ColorModeSwitcher />
-                </HStack>
-
+            <VStack align="left" gap={10} mt={20}>
                 <VStack align="left" gap={5}>
-                    <Heading size="lg">Manage Data:</Heading>
+                    <Heading size="lg" textAlign="center">Manage Data</Heading>
 
-                    <Box>
+                    <SimpleGrid columns={2} textAlign="center">
                         <p>
                             Notes:
                             {notes}
@@ -54,7 +48,7 @@ export default function Settings() {
                             Tags:
                             {tags}
                         </p>
-                    </Box>
+                    </SimpleGrid>
 
                     <ExportButton />
                     <DeleteButton updateCounts={updateCounts} />
@@ -97,18 +91,37 @@ function DeleteButton({ updateCounts, buttonText = 'Delete All Data' }) {
     );
 }
 
+function blobToBase64(blob) {
+    return new Promise((resolve, _) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+    });
+}
+
 function ExportButton() {
     const doExport = async () => {
-        // const notes = await NotesService.getAll();
-        // const tags = await TagsService.getAll();
+        const promises = (await db.allDocs({ include_docs: true, attachments: true })).rows
+            .map(async (d) => {
+                if (d.doc.attachments) {
+                    const _promises = d.doc.attachments.map(async ({ name, data, id }) => ({
+                        id,
+                        name,
+                        data: await blobToBase64(data)
+                    }));
 
-        const data = await db.allDocs({ include_docs: true, attachments: true })
-            .then((d) => JSON.stringify(d, null, 2));
+                    d.doc.attachments = await Promise.all(_promises);
+                }
+
+                return d;
+            });
+
+        const data = await Promise.all(promises);
 
         const timestamp = new Date().toISOString().replaceAll('T', '_').replaceAll(':', '-')
             .slice(0, -8);
 
-        download(data, `NotesAppExport_${timestamp}.json`, 'text/json');
+        download(JSON.stringify(data, null, 2), `NotesAppExport_${timestamp}.json`, 'text/json');
     };
 
     return <Button onClick={() => doExport()}>Export Data</Button>;
