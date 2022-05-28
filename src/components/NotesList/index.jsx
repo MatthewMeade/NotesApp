@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Container, FormLabel, Grid, GridItem, VStack, Input, HStack, Heading
+    Container, FormLabel, Grid, GridItem, VStack, Input, Stack, Heading
 } from '@chakra-ui/react';
 
 import { AsyncSelect } from 'chakra-react-select';
@@ -79,7 +79,18 @@ export default function NotesList() {
 
     return (
         <Container maxW="container.xl" bg="rgba(0,0,0,0.05)" pb={10} pt={5}>
-            <Grid templateColumns="min-content auto" gap={6} alignItems="center" mb={10}>
+            <Grid
+                templateColumns={{
+                    base: 'auto',
+                    md: 'min-content auto'
+                }}
+                gap={{
+                    base: 0,
+                    md: 10
+                }}
+                alignItems="center"
+                mb={10}
+            >
                 <GridItem>
                     <FormLabel htmlFor="title" pt="4px">
                         Title:
@@ -94,10 +105,15 @@ export default function NotesList() {
                     />
                 </GridItem>
                 <GridItem>
-                    <FormLabel pt="4px">Date:</FormLabel>
+                    <FormLabel
+                        pt="4px"
+                        mt={{ base: 5, md: 0 }}
+                    >
+                        Date:
+                    </FormLabel>
                 </GridItem>
                 <GridItem>
-                    <HStack>
+                    <Stack direction={{ base: 'column', md: 'row' }}>
                         <Input
                             id="dateFrom"
                             name="From"
@@ -114,10 +130,10 @@ export default function NotesList() {
                             onChange={(e) => updateFilter('dateTo', e.target.value)}
                             placeholder="Today"
                         />
-                    </HStack>
+                    </Stack>
                 </GridItem>
                 <GridItem>
-                    <FormLabel htmlFor="tags" pt="4px">
+                    <FormLabel htmlFor="tags" pt="4px" mt={{ base: 5, md: 0 }}>
                         Tags:
                     </FormLabel>
                 </GridItem>
