@@ -64,7 +64,7 @@ export default function NavBar() {
                     />
                 )}
                 <HStack spacing={8} alignItems="center">
-                    <Heading fontSize="1.5em">Notes App</Heading>
+                    <Link to="/"><Heading fontSize="1.5em">Notes App</Heading></Link>
                     <HStack as="nav" spacing={4} display={{ base: 'none', md: 'flex' }}>
                         <NavLink path="/">My Notes</NavLink>
                     </HStack>
@@ -73,9 +73,27 @@ export default function NavBar() {
                 {/* Right Side Buttons */}
                 <Flex alignItems="center">
                     <RouterLink to="/add">
-                        <Button variant="solid" colorScheme="green" size="sm" leftIcon={<AddIcon />}>
-                                Add Note
+                        <Button
+                            variant="solid"
+                            colorScheme="green"
+                            size="sm"
+                            leftIcon={<AddIcon />}
+                            display={{ md: 'block', base: 'none' }}
+
+                        >
+                            Add Note
                         </Button>
+
+                        <Button
+                            variant="solid"
+                            colorScheme="green"
+                            size="sm"
+                            display={{ md: 'none', base: 'block' }}
+                        >
+                            <AddIcon />
+
+                        </Button>
+
                     </RouterLink>
 
                     <RouterLink to="/settings">
