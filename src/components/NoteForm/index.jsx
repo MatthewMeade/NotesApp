@@ -3,7 +3,7 @@
 /* eslint-disable no-alert */
 import { v4 as uuid } from 'uuid';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useCallback, useState } from 'react';
 
 import {
     Container,
@@ -176,6 +176,11 @@ export default function NoteForm() {
         navigate(`/note/${id}`);
     };
 
+    const getMdeInstanceCallback = useCallback((simpleMde) => {
+        // Hacky way to support setting a custom icon in the toolbar
+        simpleMde.toolbar.find((t) => t.name === 'upload-image').className = 'fa fa-upload';
+    }, []);
+
     const options = useMemo(() => ({
         spellChecker: false,
         placeholder: 'Write your note here...',
@@ -191,6 +196,7 @@ export default function NoteForm() {
             'ordered-list',
             'link',
             'image',
+            'upload-image',
             'table',
             '|',
             'clean-block',
@@ -222,6 +228,7 @@ export default function NoteForm() {
             <FormControl mb="2em" isInvalid={doValidation.text && textError}>
                 <FormLabel htmlFor="email">Note Body:</FormLabel>
                 <SimpleMDE
+                    getMdeInstance={getMdeInstanceCallback}
                     value={note.text}
                     onChange={(value) => updateNote('text', value)}
                     options={options}
