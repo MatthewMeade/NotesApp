@@ -39,7 +39,7 @@ export default class NotesService extends BaseService {
         }
 
         if (tags && tags.length > 0) {
-            selector.tags = { $in: tags };
+            selector.tags = { $elemMatch: { $in: tags } };
         }
 
         return super.find(selector, paging, options);

@@ -35,12 +35,13 @@ export default function NotesList() {
 
         return NotesService.find(
             { title: filter.title, tags: filter?.tags?.map((t) => t.id), date },
-            page ? { skip: notes.length, limit: PAGE_SIZE, sort: [{ updatedDate: 'desc' }] } : {}
+            page ? { skip: notes.length, limit: PAGE_SIZE, sort: [{ updatedDate: 'desc' }] }
+                : { sort: [{ updatedDate: 'desc' }] }
         );
     };
 
     const loadMore = (clear) => {
-        find(true).then((newNotes) => {
+        find(!clear).then((newNotes) => {
             setIsLoading(false);
 
             if (clear) {
