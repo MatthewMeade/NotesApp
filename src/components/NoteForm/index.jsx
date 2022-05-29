@@ -14,7 +14,8 @@ import {
     Center,
     FormErrorMessage,
     useToast,
-    Input
+    Input,
+    Text
 } from '@chakra-ui/react';
 import { AsyncCreatableSelect } from 'chakra-react-select';
 import { useNavigate, useParams } from 'react-router';
@@ -202,10 +203,10 @@ export default function NoteForm() {
 
     return (
         <Container maxW="container.xl">
-            <Heading mb="1em" mt="5px">
-                {id ? 'Edit' : 'Add'}
-                {' '}
-                Note:
+            <Heading mb="1em" mt={5}>
+                <Text align="center">
+                    {id ? 'Edit Note' : 'Add Note'}
+                </Text>
             </Heading>
 
             <FormControl mb="2em" isInvalid={doValidation.title && titleError}>
@@ -257,11 +258,11 @@ export default function NoteForm() {
 
             <Center>
                 {id ? (
-                    <Button colorScheme="green" disabled={inputErrors} onClick={_updateNote}>
+                    <Button colorScheme="green" disabled={inputErrors} onClick={_updateNote} w="100%" maxW="500px">
                         Save Note
                     </Button>
                 ) : (
-                    <Button colorScheme="green" disabled={inputErrors} onClick={_addNote}>
+                    <Button colorScheme="green" disabled={inputErrors} onClick={_addNote} w="100%" maxW="500px">
                         Add Note
                     </Button>
                 )}
