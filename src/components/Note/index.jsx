@@ -12,7 +12,8 @@ import {
     Text,
     useColorModeValue,
     useToast,
-    VStack, Skeleton
+    VStack, Skeleton,
+    Stack
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
@@ -64,7 +65,7 @@ export default function Note({ note: _note, controlType = 'page' }) {
     };
 
     const controls = (
-        <HStack justifyContent="right" py={isPage ? 3 : 0}>
+        <HStack justifyContent={{ base: 'space-between', md: 'right' }} py={isPage ? 3 : 0}>
             <Link to={`/note/${note._id}/edit`}>
                 <Button leftIcon={<EditIcon />} size="md">
                 Edit
@@ -106,25 +107,40 @@ export default function Note({ note: _note, controlType = 'page' }) {
                     borderBottom="1px solid grey"
                     className={`noteHeader ${isOpen ? 'note_open' : 'note_closed'}`}
                 >
-                    <HStack alignItems="center" justifyContent="space-between">
-                        <Heading size="md">
-                            {note.title}
+
+                    <Stack alignItems="center" justifyContent="space-between" direction={{ base: 'column', md: 'row' }}>
+                        <Heading size="md" textAlign={{ base: 'left', md: 'center' }}>
+                            <Box textAlign={{ base: 'center', md: 'left' }}>
+
+                                {note.title}
+                            </Box>
                         </Heading>
 
-                        {!isPage && controls}
-                    </HStack>
+                        <Box
+                            display={{ base: 'none', md: 'block' }}
+                        >
+                            {!isPage && controls}
+                        </Box>
 
-                    <Flex justify="space-between">
-                        <Flex wrap="wrap" gap={1} pb={2}>
-                            <p>Tags: </p>
+                    </Stack>
+
+                    <Flex justify="space-between" flexDirection={{ base: 'column', md: 'row' }}>
+                        <Flex wrap="wrap" gap={1} pb={2} justifyContent="center">
                             {note.tags.map((tag) => (
                                 <Tag size="sm" key={tag._id}>
                                     {tag.value}
                                 </Tag>
                             ))}
                         </Flex>
-                        <Text as="i">{dateStr}</Text>
+                        <Text as="i" display={{ base: 'none', md: 'block' }}>{dateStr}</Text>
                     </Flex>
+
+                    <Box
+                        px={10}
+                        display={{ base: 'block', md: 'none' }}
+                    >
+                        {!isPage && controls}
+                    </Box>
                 </VStack>
 
                 <SlideFade in={isOpen || isPage} unmountOnExit>
