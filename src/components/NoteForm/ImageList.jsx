@@ -50,8 +50,7 @@ function ImageListItem({ name, attachment, deleteImage, updateImageTitle }) {
                     body={[`Are you sure you want to delete ${name}?`,
                         'This will also remove the markdown associated with the image from the note body']}
                     button={{
-                        icon: <DeleteIcon />,
-                        label: 'Delete',
+                        label: <DeleteIcon />,
                         color: 'red'
                     }}
                     onConfirm={(() => deleteImage(name))}
