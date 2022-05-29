@@ -13,7 +13,7 @@ import TagsService from '../../db/tagsService';
 import Note, { NoteSkeleton } from '../Note';
 import db from '../../db/db';
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 10;
 
 export default function NotesList() {
     const [filter, setFilter] = useState({
@@ -41,7 +41,7 @@ export default function NotesList() {
     };
 
     const loadMore = (clear) => {
-        find(!clear).then((newNotes) => {
+        find(true).then((newNotes) => {
             setIsLoading(false);
 
             if (clear) {
@@ -52,9 +52,6 @@ export default function NotesList() {
     };
 
     const onFilterUpdate = useDebouncedCallback(() => {
-        setResultCount(0);
-        setNotes([]);
-        setIsLoading(true);
         find(false).then((results) => {
             setResultCount(results.length);
             loadMore(true);
@@ -63,11 +60,15 @@ export default function NotesList() {
 
     const updateFilter = (key, value) => {
         setFilter({ ...filter, [key]: value });
+        setIsLoading(true);
+        setResultCount(0);
+        setNotes([]);
+        onFilterUpdate();
     };
 
     useEffect(() => {
         onFilterUpdate();
-    }, [filter]);
+    }, []);
 
     useEffect(() => {
         db.changes({

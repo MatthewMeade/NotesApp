@@ -30,6 +30,8 @@ export default function Note({ note: _note, controlType = 'page' }) {
     const navigate = useNavigate();
     const toast = useToast();
 
+    console.log('Rendering Note');
+
     const [note, setNote] = useState(_note ?? { tags: [], attachments: [] });
 
     useEffect(() => {
