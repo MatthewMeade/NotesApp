@@ -1,5 +1,5 @@
 import { DeleteIcon } from '@chakra-ui/icons';
-import { SimpleGrid, Box, Image, Input } from '@chakra-ui/react';
+import { SimpleGrid, Box, Image, Input, useBreakpointValue } from '@chakra-ui/react';
 import React from 'react';
 
 import ConfirmableButton from '../ConfirmableButton';
@@ -23,17 +23,18 @@ export default function ImageList({ attachments, deleteImage, updateImageTitle }
 function ImageListItem({ name, attachment, deleteImage, updateImageTitle }) {
     const url = URL.createObjectURL(attachment.data);
 
+    const imageWidth = useBreakpointValue([100, 150, 200, 250]);
     return (
         <SimpleGrid
             columns={3}
-            spacing={10}
+            spacing={2}
             alignItems="center"
             bg="gray.900"
-            templateColumns="0.5fr auto min-content"
+            templateColumns={`${imageWidth}px auto min-content`}
             mb={10}
         >
-            <Box h={150}>
-                <Image src={url} alt={name} height="100%" margin="0 auto" />
+            <Box maxH={imageWidth * 0.66} overflow="hidden">
+                <Image src={url} alt={name} margin="0 auto" />
             </Box>
             <Box display="block">
 
