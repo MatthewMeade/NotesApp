@@ -15,6 +15,11 @@ module.exports = {
     plugins: ['react'],
     rules: {
         'react/jsx-indent': 0,
+        'no-param-reassign': 0,
+        'react/no-unstable-nested-components': 0,
+        'no-loop-func': 0,
+        'no-alert': 0,
+        'prefer-destructuring': 0,
         indent: ['error', 4],
         semi: ['error', 'always'],
         'comma-dangle': ['error', 'never'],

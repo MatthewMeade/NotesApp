@@ -85,7 +85,6 @@ export default class BaseService {
             for (const key of sort) {
                 let _key = key;
                 if (typeof key === 'object') {
-                    // eslint-disable-next-line prefer-destructuring
                     _key = Object.keys(key)[0];
                 }
                 if (!_selector[_key]) {

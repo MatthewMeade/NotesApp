@@ -1,6 +1,3 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-loop-func */
-/* eslint-disable no-alert */
 import { v4 as uuid } from 'uuid';
 
 import React, { useEffect, useMemo, useCallback, useState } from 'react';

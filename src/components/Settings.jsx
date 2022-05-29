@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { DeleteIcon, RepeatIcon } from '@chakra-ui/icons';
 import {
     Button, Container, Heading, SimpleGrid, useToast, VStack
