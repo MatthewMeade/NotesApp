@@ -146,8 +146,9 @@ export default function NoteForm() {
     const inputErrors = textError || tagError || titleError;
 
     const _addNote = async () => {
-        const newNote = await NotesService.add(note);
-        newNote.attachments = attachments;
+        const newNote = await NotesService.add({
+            ...note, attachments
+        });
         toast({
             title: 'Note created',
             description: 'Your note has been saved',

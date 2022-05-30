@@ -30,8 +30,6 @@ export default function Note({ note: _note, controlType = 'page' }) {
     const navigate = useNavigate();
     const toast = useToast();
 
-    console.log('Rendering Note');
-
     const [note, setNote] = useState(_note ?? { tags: [], attachments: [] });
 
     useEffect(() => {
@@ -55,7 +53,7 @@ export default function Note({ note: _note, controlType = 'page' }) {
     const [isOpen, setOpen] = useState(true);
 
     const onDelete = async () => {
-        await NotesService.delete(id);
+        await NotesService.delete(note);
         toast({
             title: 'Note Deleted',
             description: 'Your note has been Deleted',

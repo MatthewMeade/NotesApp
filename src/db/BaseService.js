@@ -39,8 +39,8 @@ export default class BaseService {
         return (await this.db.put(_value)).id;
     }
 
-    static delete(id) {
-        return this.db.remove(id);
+    static delete(note) {
+        return this.db.remove(note);
     }
 
     static update(value) {
